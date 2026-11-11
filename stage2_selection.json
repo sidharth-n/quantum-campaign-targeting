@@ -1,0 +1,1316 @@
+{
+  "constraints": {
+    "n_candidates": 10,
+    "n_select": 6,
+    "budget": 25.0,
+    "capacity": 22.0,
+    "source": "sheet Stage2_Constraints of the organisers' workbook"
+  },
+  "candidates": [
+    {
+      "customer_id": "C0031",
+      "rank": 1,
+      "qubit": 0,
+      "predicted_probability": 0.584193674583,
+      "contact_cost": 2,
+      "expected_deposit_value": 13,
+      "capacity_units": 1,
+      "customer_segment": "D",
+      "expected_net_value": 5.59451776958,
+      "selected": 1,
+      "brute_force_selected": 1
+    },
+    {
+      "customer_id": "C0079",
+      "rank": 2,
+      "qubit": 1,
+      "predicted_probability": 0.561834786208,
+      "contact_cost": 3,
+      "expected_deposit_value": 24,
+      "capacity_units": 3,
+      "customer_segment": "A",
+      "expected_net_value": 10.484034869,
+      "selected": 1,
+      "brute_force_selected": 1
+    },
+    {
+      "customer_id": "C0081",
+      "rank": 3,
+      "qubit": 2,
+      "predicted_probability": 0.346776451143,
+      "contact_cost": 4,
+      "expected_deposit_value": 17,
+      "capacity_units": 1,
+      "customer_segment": "C",
+      "expected_net_value": 1.89519966943,
+      "selected": 1,
+      "brute_force_selected": 1
+    },
+    {
+      "customer_id": "C0318",
+      "rank": 4,
+      "qubit": 3,
+      "predicted_probability": 0.234996795131,
+      "contact_cost": 3,
+      "expected_deposit_value": 21,
+      "capacity_units": 3,
+      "customer_segment": "A",
+      "expected_net_value": 1.93493269775,
+      "selected": 1,
+      "brute_force_selected": 1
+    },
+    {
+      "customer_id": "C0183",
+      "rank": 5,
+      "qubit": 4,
+      "predicted_probability": 0.199078457375,
+      "contact_cost": 2,
+      "expected_deposit_value": 14,
+      "capacity_units": 3,
+      "customer_segment": "B",
+      "expected_net_value": 0.78709840325,
+      "selected": 0,
+      "brute_force_selected": 0
+    },
+    {
+      "customer_id": "C0005",
+      "rank": 6,
+      "qubit": 5,
+      "predicted_probability": 0.190277898119,
+      "contact_cost": 2,
+      "expected_deposit_value": 21,
+      "capacity_units": 3,
+      "customer_segment": "C",
+      "expected_net_value": 1.9958358605,
+      "selected": 1,
+      "brute_force_selected": 1
+    },
+    {
+      "customer_id": "C0338",
+      "rank": 7,
+      "qubit": 6,
+      "predicted_probability": 0.188363799263,
+      "contact_cost": 2,
+      "expected_deposit_value": 18,
+      "capacity_units": 2,
+      "customer_segment": "A",
+      "expected_net_value": 1.39054838673,
+      "selected": 0,
+      "brute_force_selected": 0
+    },
+    {
+      "customer_id": "C0208",
+      "rank": 8,
+      "qubit": 7,
+      "predicted_probability": 0.174968781868,
+      "contact_cost": 4,
+      "expected_deposit_value": 21,
+      "capacity_units": 3,
+      "customer_segment": "D",
+      "expected_net_value": -0.325655580772,
+      "selected": 0,
+      "brute_force_selected": 0
+    },
+    {
+      "customer_id": "C0345",
+      "rank": 9,
+      "qubit": 8,
+      "predicted_probability": 0.166103002789,
+      "contact_cost": 4,
+      "expected_deposit_value": 27,
+      "capacity_units": 2,
+      "customer_segment": "A",
+      "expected_net_value": 0.484781075303,
+      "selected": 0,
+      "brute_force_selected": 0
+    },
+    {
+      "customer_id": "C0170",
+      "rank": 10,
+      "qubit": 9,
+      "predicted_probability": 0.164946830238,
+      "contact_cost": 1,
+      "expected_deposit_value": 22,
+      "capacity_units": 1,
+      "customer_segment": "C",
+      "expected_net_value": 2.62883026524,
+      "selected": 1,
+      "brute_force_selected": 1
+    }
+  ],
+  "selected_ids": [
+    "C0031",
+    "C0079",
+    "C0081",
+    "C0318",
+    "C0005",
+    "C0170"
+  ],
+  "selected_ids_comma_separated": "C0031,C0079,C0081,C0318,C0005,C0170",
+  "budget_used": 15.0,
+  "capacity_used": 12.0,
+  "objective_value": 24.5333511315,
+  "selection_bitstring": {
+    "qiskit_key": "1000101111",
+    "x_by_qubit": "1111010001",
+    "convention": "qubit i = candidate with stage 1 rank i + 1; a Qiskit key shows qubit 0 as its rightmost character; x_by_qubit lists qubit 0 first",
+    "times_measured": 182,
+    "source": "noiseless Aer sample, penalty QAOA depth p=3, 8192 shots"
+  },
+  "brute_force": {
+    "selected_ids": [
+      "C0031",
+      "C0079",
+      "C0081",
+      "C0318",
+      "C0005",
+      "C0170"
+    ],
+    "objective_value": 24.5333511315,
+    "budget_used": 15.0,
+    "capacity_used": 12.0,
+    "bitstring_qiskit": "1000101111",
+    "selections_of_size_k": 210,
+    "feasible_selections": 210,
+    "second_best_objective": 24.0286998488
+  },
+  "optimality_gap": 0.0,
+  "relative_optimality_gap": 0.0,
+  "matches_brute_force": true,
+  "constraint_activity": {
+    "max_cost_of_any_selection": 20.0,
+    "budget": 25.0,
+    "budget_can_bind": false,
+    "max_capacity_of_any_selection": 17.0,
+    "capacity": 22.0,
+    "capacity_can_bind": false,
+    "feasible_selections": 210,
+    "selections_of_size_k": 210
+  },
+  "qubo": {
+    "encoding": "unbalanced penalisation, 10 qubits, no auxiliary qubits",
+    "energy": "E(x) = -sum v_i x_i + A (sum x_i - K)^2 + sum over {budget, capacity} [ -lambda_1 g(x) + lambda_2 g(x)^2 ], g(x) = limit - sum w_i x_i",
+    "penalties": {
+      "valid": true,
+      "selections_below_optimum": 0,
+      "v_max": 10.484034869,
+      "A": 2.62100871725,
+      "lambda_1": 0.062904209214,
+      "lambda_2": 0.010484034869,
+      "A_over_vmax": 0.25,
+      "lambda2_over_vmax": 0.001,
+      "preferred_slack": 3.0,
+      "relative_gap": 0.00555430132127,
+      "gap": 0.703847945208,
+      "n_valid": 76,
+      "n_grid": 336
+    },
+    "ground_state_check": {
+      "valid": true,
+      "ground_index": 559,
+      "ground_energy": -23.694628342,
+      "gap": 0.703847945208,
+      "relative_gap": 0.00555430132127,
+      "energy_max": 103.026610658,
+      "selections_below_optimum": 0
+    },
+    "ising_vs_qubo_max_abs_difference": 7.31077420824e-11,
+    "ising_check_note": "largest |Ising energy - QUBO energy| over all 1024 states, using h, J and the constant exactly as written below",
+    "ising": {
+      "h": [
+        5.68036847376,
+        8.38198587776,
+        4.00893801646,
+        4.10743479214,
+        3.4444033485,
+        4.04877207713,
+        3.66225606129,
+        3.06625494926,
+        3.38760099835,
+        4.1084104252
+      ],
+      "J": [
+        [
+          0.0,
+          1.35768251553,
+          1.35768251553,
+          1.35768251553,
+          1.34719848067,
+          1.34719848067,
+          1.34195646323,
+          1.3681665504,
+          1.36292453297,
+          1.32623041093
+        ],
+        [
+          0.0,
+          0.0,
+          1.38913462014,
+          1.40486067244,
+          1.38913462014,
+          1.38913462014,
+          1.37340856784,
+          1.42058672475,
+          1.40486067244,
+          1.34195646323
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.38913462014,
+          1.3681665504,
+          1.3681665504,
+          1.36292453297,
+          1.41010268988,
+          1.40486067244,
+          1.3367144458
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.38913462014,
+          1.38913462014,
+          1.37340856784,
+          1.42058672475,
+          1.40486067244,
+          1.34195646323
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.37865058527,
+          1.36292453297,
+          1.39961865501,
+          1.38389260271,
+          1.3367144458
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.36292453297,
+          1.39961865501,
+          1.38389260271,
+          1.3367144458
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.38389260271,
+          1.37340856784,
+          1.33147242836
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.42582874218,
+          1.34719848067
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.34195646323
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "constant": -2.65747386268
+    },
+    "slack_variant": {
+      "qubits": 18,
+      "auxiliary_qubits": 8,
+      "labels": [
+        "x0",
+        "x1",
+        "x2",
+        "x3",
+        "x4",
+        "x5",
+        "x6",
+        "x7",
+        "x8",
+        "x9",
+        "s_b0",
+        "s_b1",
+        "s_b2",
+        "s_b3",
+        "s_h0",
+        "s_h1",
+        "s_h2",
+        "s_h3"
+      ],
+      "A": 20.968069738,
+      "mu": 20.968069738,
+      "ground_state_check": {
+        "valid": true,
+        "ground_index": 225839,
+        "ground_energy": -24.5333511315,
+        "gap": 0.504651282703,
+        "relative_gap": 2.0998287581e-05,
+        "energy_max": 24008.43985,
+        "selections_below_optimum": 0
+      },
+      "feasible_energy_max_abs_error": 5.93125548676e-12,
+      "zz_couplings": 137
+    },
+    "zz_couplings": 45
+  },
+  "qaoa": {
+    "layers": 3,
+    "optimised_parameters": {
+      "gamma": [
+        -0.70141798482,
+        -1.25257849239,
+        -1.93892148187
+      ],
+      "beta": [
+        0.478412429258,
+        0.496422926599,
+        0.194976976483
+      ]
+    },
+    "cost_scale": "H_C is the Ising Hamiltonian divided by its largest coefficient",
+    "objective": "CVaR, alpha = 0.25",
+    "cvar_objective_value": -2.37248851089,
+    "optimiser": "COBYLA, 600 iterations per start, 9 starts",
+    "best_start": "interpolated",
+    "shots": 8192,
+    "simulator": "qiskit-aer AerSimulator, statevector method",
+    "exact_output_distribution": {
+      "p_optimal": 0.0242654817241,
+      "feasible_fraction": 0.628056842182,
+      "p_optimal_given_feasible": 0.0386358050647,
+      "mean_value_of_feasible_over_optimum": 0.873482157498,
+      "energy_ratio": 0.930594484561
+    },
+    "noiseless_sample": {
+      "shots": 8192,
+      "distinct_bitstrings": 756,
+      "p_optimal": 0.022216796875,
+      "feasible_fraction": 0.623168945312,
+      "p_optimal_given_feasible": 0.0356513222331,
+      "mean_value_of_feasible_over_optimum": 0.873631488874,
+      "energy_ratio": 0.928826676886,
+      "best_feasible": {
+        "bitstring_qiskit": "1000101111",
+        "x_by_qubit": "1111010001",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0081",
+          "C0318",
+          "C0005",
+          "C0170"
+        ],
+        "n_selected": 6,
+        "cost": 15.0,
+        "capacity": 12.0,
+        "feasible": true,
+        "value": 24.5333511315,
+        "count": 182
+      }
+    },
+    "noisy_sample": {
+      "shots": 8192,
+      "distinct_bitstrings": 1016,
+      "p_optimal": 0.0032958984375,
+      "feasible_fraction": 0.319091796875,
+      "p_optimal_given_feasible": 0.0103289977047,
+      "mean_value_of_feasible_over_optimum": 0.715770948248,
+      "energy_ratio": 0.887694745828,
+      "best_feasible": {
+        "bitstring_qiskit": "1000101111",
+        "x_by_qubit": "1111010001",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0081",
+          "C0318",
+          "C0005",
+          "C0170"
+        ],
+        "n_selected": 6,
+        "cost": 15.0,
+        "capacity": 12.0,
+        "feasible": true,
+        "value": 24.5333511315,
+        "count": 27
+      }
+    },
+    "uniform_random_reference": {
+      "p_optimal": 0.0009765625,
+      "feasible_fraction": 0.205078125,
+      "p_optimal_given_feasible": 0.0047619047619,
+      "mean_value_of_feasible_over_optimum": 0.657149280716,
+      "p_optimum_seen_in_shots": 0.999665846067
+    },
+    "best_bitstrings": [
+      {
+        "bitstring_qiskit": "1000101111",
+        "x_by_qubit": "1111010001",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0081",
+          "C0318",
+          "C0005",
+          "C0170"
+        ],
+        "n_selected": 6,
+        "cost": 15.0,
+        "capacity": 12.0,
+        "feasible": true,
+        "value": 24.5333511315,
+        "count": 182,
+        "is_exact_optimum": true
+      },
+      {
+        "bitstring_qiskit": "1111111111",
+        "x_by_qubit": "1111111111",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0081",
+          "C0318",
+          "C0183",
+          "C0005",
+          "C0338",
+          "C0208",
+          "C0345",
+          "C0170"
+        ],
+        "n_selected": 10,
+        "cost": 27.0,
+        "capacity": 22.0,
+        "feasible": false,
+        "value": 26.870123416,
+        "count": 143,
+        "is_exact_optimum": false
+      },
+      {
+        "bitstring_qiskit": "1001001111",
+        "x_by_qubit": "1111001001",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0081",
+          "C0318",
+          "C0338",
+          "C0170"
+        ],
+        "n_selected": 6,
+        "cost": 15.0,
+        "capacity": 11.0,
+        "feasible": true,
+        "value": 23.9280636577,
+        "count": 140,
+        "is_exact_optimum": false
+      },
+      {
+        "bitstring_qiskit": "1001101011",
+        "x_by_qubit": "1101011001",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0318",
+          "C0005",
+          "C0338",
+          "C0170"
+        ],
+        "n_selected": 6,
+        "cost": 13.0,
+        "capacity": 13.0,
+        "feasible": true,
+        "value": 24.0286998488,
+        "count": 138,
+        "is_exact_optimum": false
+      },
+      {
+        "bitstring_qiskit": "0001101111",
+        "x_by_qubit": "1111011000",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0081",
+          "C0318",
+          "C0005",
+          "C0338"
+        ],
+        "n_selected": 6,
+        "cost": 16.0,
+        "capacity": 13.0,
+        "feasible": true,
+        "value": 23.295069253,
+        "count": 132,
+        "is_exact_optimum": false
+      },
+      {
+        "bitstring_qiskit": "1000011111",
+        "x_by_qubit": "1111100001",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0081",
+          "C0318",
+          "C0183",
+          "C0170"
+        ],
+        "n_selected": 6,
+        "cost": 15.0,
+        "capacity": 12.0,
+        "feasible": true,
+        "value": 23.3246136742,
+        "count": 130,
+        "is_exact_optimum": false
+      },
+      {
+        "bitstring_qiskit": "1000111011",
+        "x_by_qubit": "1101110001",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0318",
+          "C0183",
+          "C0005",
+          "C0170"
+        ],
+        "n_selected": 6,
+        "cost": 13.0,
+        "capacity": 14.0,
+        "feasible": true,
+        "value": 23.4252498653,
+        "count": 128,
+        "is_exact_optimum": false
+      },
+      {
+        "bitstring_qiskit": "1001100111",
+        "x_by_qubit": "1110011001",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0081",
+          "C0005",
+          "C0338",
+          "C0170"
+        ],
+        "n_selected": 6,
+        "cost": 14.0,
+        "capacity": 11.0,
+        "feasible": true,
+        "value": 23.9889668205,
+        "count": 127,
+        "is_exact_optimum": false
+      },
+      {
+        "bitstring_qiskit": "1000110111",
+        "x_by_qubit": "1110110001",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0081",
+          "C0183",
+          "C0005",
+          "C0170"
+        ],
+        "n_selected": 6,
+        "cost": 14.0,
+        "capacity": 12.0,
+        "feasible": true,
+        "value": 23.385516837,
+        "count": 125,
+        "is_exact_optimum": false
+      },
+      {
+        "bitstring_qiskit": "1100001111",
+        "x_by_qubit": "1111000011",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0081",
+          "C0318",
+          "C0345",
+          "C0170"
+        ],
+        "n_selected": 6,
+        "cost": 17.0,
+        "capacity": 11.0,
+        "feasible": true,
+        "value": 23.0222963463,
+        "count": 125,
+        "is_exact_optimum": false
+      }
+    ],
+    "best_bitstrings_noisy": [
+      {
+        "bitstring_qiskit": "1000011111",
+        "x_by_qubit": "1111100001",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0081",
+          "C0318",
+          "C0183",
+          "C0170"
+        ],
+        "n_selected": 6,
+        "cost": 15.0,
+        "capacity": 12.0,
+        "feasible": true,
+        "value": 23.3246136742,
+        "count": 32,
+        "is_exact_optimum": false
+      },
+      {
+        "bitstring_qiskit": "1001101011",
+        "x_by_qubit": "1101011001",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0318",
+          "C0005",
+          "C0338",
+          "C0170"
+        ],
+        "n_selected": 6,
+        "cost": 13.0,
+        "capacity": 13.0,
+        "feasible": true,
+        "value": 24.0286998488,
+        "count": 31,
+        "is_exact_optimum": false
+      },
+      {
+        "bitstring_qiskit": "1001001111",
+        "x_by_qubit": "1111001001",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0081",
+          "C0318",
+          "C0338",
+          "C0170"
+        ],
+        "n_selected": 6,
+        "cost": 15.0,
+        "capacity": 11.0,
+        "feasible": true,
+        "value": 23.9280636577,
+        "count": 30,
+        "is_exact_optimum": false
+      },
+      {
+        "bitstring_qiskit": "1111111101",
+        "x_by_qubit": "1011111111",
+        "ids": [
+          "C0031",
+          "C0081",
+          "C0318",
+          "C0183",
+          "C0005",
+          "C0338",
+          "C0208",
+          "C0345",
+          "C0170"
+        ],
+        "n_selected": 9,
+        "cost": 24.0,
+        "capacity": 19.0,
+        "feasible": false,
+        "value": 16.386088547,
+        "count": 28,
+        "is_exact_optimum": false
+      },
+      {
+        "bitstring_qiskit": "1000101111",
+        "x_by_qubit": "1111010001",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0081",
+          "C0318",
+          "C0005",
+          "C0170"
+        ],
+        "n_selected": 6,
+        "cost": 15.0,
+        "capacity": 12.0,
+        "feasible": true,
+        "value": 24.5333511315,
+        "count": 27,
+        "is_exact_optimum": true
+      },
+      {
+        "bitstring_qiskit": "1001100111",
+        "x_by_qubit": "1110011001",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0081",
+          "C0005",
+          "C0338",
+          "C0170"
+        ],
+        "n_selected": 6,
+        "cost": 14.0,
+        "capacity": 11.0,
+        "feasible": true,
+        "value": 23.9889668205,
+        "count": 27,
+        "is_exact_optimum": false
+      },
+      {
+        "bitstring_qiskit": "1101101111",
+        "x_by_qubit": "1111011011",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0081",
+          "C0318",
+          "C0005",
+          "C0338",
+          "C0345",
+          "C0170"
+        ],
+        "n_selected": 8,
+        "cost": 21.0,
+        "capacity": 16.0,
+        "feasible": false,
+        "value": 26.4086805935,
+        "count": 27,
+        "is_exact_optimum": false
+      },
+      {
+        "bitstring_qiskit": "1000110111",
+        "x_by_qubit": "1110110001",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0081",
+          "C0183",
+          "C0005",
+          "C0170"
+        ],
+        "n_selected": 6,
+        "cost": 14.0,
+        "capacity": 12.0,
+        "feasible": true,
+        "value": 23.385516837,
+        "count": 26,
+        "is_exact_optimum": false
+      },
+      {
+        "bitstring_qiskit": "1011001111",
+        "x_by_qubit": "1111001101",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0081",
+          "C0318",
+          "C0338",
+          "C0208",
+          "C0170"
+        ],
+        "n_selected": 7,
+        "cost": 19.0,
+        "capacity": 14.0,
+        "feasible": false,
+        "value": 23.602408077,
+        "count": 26,
+        "is_exact_optimum": false
+      },
+      {
+        "bitstring_qiskit": "1111111111",
+        "x_by_qubit": "1111111111",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0081",
+          "C0318",
+          "C0183",
+          "C0005",
+          "C0338",
+          "C0208",
+          "C0345",
+          "C0170"
+        ],
+        "n_selected": 10,
+        "cost": 27.0,
+        "capacity": 22.0,
+        "feasible": false,
+        "value": 26.870123416,
+        "count": 25,
+        "is_exact_optimum": false
+      }
+    ],
+    "transpilation": {
+      "logical_qubits": 10,
+      "physical_qubits_device": 19,
+      "physical_qubits_used": 10,
+      "depth_original": 45,
+      "depth_transpiled": 728,
+      "one_qubit_gates_original": 70,
+      "two_qubit_gates_original": 135,
+      "multi_qubit_blocks_original": 0,
+      "one_qubit_gates_transpiled": 2740,
+      "two_qubit_gates_transpiled": 479,
+      "swap_count": 119,
+      "original_gate_counts": {
+        "barrier": 1,
+        "h": 10,
+        "measure": 10,
+        "rx": 30,
+        "rz": 30,
+        "rzz": 135
+      },
+      "transpiled_gate_counts": {
+        "barrier": 1,
+        "ecr": 479,
+        "measure": 10,
+        "rz": 1534,
+        "sx": 1113,
+        "x": 93
+      },
+      "basis_gates": [
+        "ecr",
+        "rz",
+        "sx",
+        "x"
+      ],
+      "coupling_map": "heavy-hex, distance 3",
+      "optimization_level": 3,
+      "transpiler_seed": 8,
+      "transpiler_seeds_tried": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "two_qubit_gates_by_seed": {
+        "0": 544,
+        "1": 499,
+        "2": 537,
+        "3": 554,
+        "4": 547,
+        "5": 536,
+        "6": 571,
+        "7": 565,
+        "8": 479,
+        "9": 546
+      },
+      "physical_qubits_by_seed": {
+        "0": 10,
+        "1": 10,
+        "2": 10,
+        "3": 10,
+        "4": 10,
+        "5": 10,
+        "6": 10,
+        "7": 10,
+        "8": 10,
+        "9": 10
+      }
+    }
+  },
+  "constraint_preserving_qaoa": {
+    "purpose": "cross-check with a hard cardinality constraint: Dicke initial state and XY mixer, no cardinality penalty",
+    "agrees_with_selection": true,
+    "layers": 3,
+    "budget_penalty_active": false,
+    "capacity_penalty_active": false,
+    "ground_state_check_within_exactly_k_subspace": {
+      "valid": true,
+      "ground_index": 559,
+      "ground_energy": -24.5333511315,
+      "gap": 0.504651282697,
+      "relative_gap": 0.0274768057747,
+      "energy_max": -6.1669046517,
+      "selections_below_optimum": 0
+    },
+    "zz_couplings": 0,
+    "optimised_parameters": {
+      "gamma": [
+        -2.26697766038,
+        -2.43809786447,
+        2.30682496284
+      ],
+      "beta": [
+        0.384180886026,
+        0.753624018555,
+        -0.408665721623
+      ]
+    },
+    "exact_output_distribution": {
+      "p_optimal": 0.0317043133396,
+      "feasible_fraction": 1.0,
+      "p_optimal_given_feasible": 0.0317043133396,
+      "mean_value_of_feasible_over_optimum": 0.767587104269,
+      "energy_ratio": 0.6960807032
+    },
+    "noiseless_sample": {
+      "shots": 8192,
+      "distinct_bitstrings": 162,
+      "p_optimal": 0.029541015625,
+      "feasible_fraction": 1.0,
+      "p_optimal_given_feasible": 0.029541015625,
+      "mean_value_of_feasible_over_optimum": 0.768009895244,
+      "energy_ratio": 0.69645759051,
+      "best_feasible": {
+        "bitstring_qiskit": "1000101111",
+        "x_by_qubit": "1111010001",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0081",
+          "C0318",
+          "C0005",
+          "C0170"
+        ],
+        "n_selected": 6,
+        "cost": 15.0,
+        "capacity": 12.0,
+        "feasible": true,
+        "value": 24.5333511315,
+        "count": 242
+      }
+    },
+    "noisy_sample": {
+      "shots": 8192,
+      "distinct_bitstrings": 964,
+      "p_optimal": 0.0037841796875,
+      "feasible_fraction": 0.294189453125,
+      "p_optimal_given_feasible": 0.0128630705394,
+      "mean_value_of_feasible_over_optimum": 0.718331879536,
+      "energy_ratio": 0.640223709786,
+      "best_feasible": {
+        "bitstring_qiskit": "1000101111",
+        "x_by_qubit": "1111010001",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0081",
+          "C0318",
+          "C0005",
+          "C0170"
+        ],
+        "n_selected": 6,
+        "cost": 15.0,
+        "capacity": 12.0,
+        "feasible": true,
+        "value": 24.5333511315,
+        "count": 31
+      }
+    },
+    "best_bitstrings": [
+      {
+        "bitstring_qiskit": "1001101011",
+        "x_by_qubit": "1101011001",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0318",
+          "C0005",
+          "C0338",
+          "C0170"
+        ],
+        "n_selected": 6,
+        "cost": 13.0,
+        "capacity": 13.0,
+        "feasible": true,
+        "value": 24.0286998488,
+        "count": 1623,
+        "is_exact_optimum": false
+      },
+      {
+        "bitstring_qiskit": "1101101001",
+        "x_by_qubit": "1001011011",
+        "ids": [
+          "C0031",
+          "C0318",
+          "C0005",
+          "C0338",
+          "C0345",
+          "C0170"
+        ],
+        "n_selected": 6,
+        "cost": 14.0,
+        "capacity": 12.0,
+        "feasible": true,
+        "value": 14.0294460551,
+        "count": 791,
+        "is_exact_optimum": false
+      },
+      {
+        "bitstring_qiskit": "1101100011",
+        "x_by_qubit": "1100011011",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0005",
+          "C0338",
+          "C0345",
+          "C0170"
+        ],
+        "n_selected": 6,
+        "cost": 14.0,
+        "capacity": 12.0,
+        "feasible": true,
+        "value": 22.5785482263,
+        "count": 542,
+        "is_exact_optimum": false
+      },
+      {
+        "bitstring_qiskit": "1001111001",
+        "x_by_qubit": "1001111001",
+        "ids": [
+          "C0031",
+          "C0318",
+          "C0183",
+          "C0005",
+          "C0338",
+          "C0170"
+        ],
+        "n_selected": 6,
+        "cost": 12.0,
+        "capacity": 13.0,
+        "feasible": true,
+        "value": 14.331763383,
+        "count": 343,
+        "is_exact_optimum": false
+      },
+      {
+        "bitstring_qiskit": "1000101111",
+        "x_by_qubit": "1111010001",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0081",
+          "C0318",
+          "C0005",
+          "C0170"
+        ],
+        "n_selected": 6,
+        "cost": 15.0,
+        "capacity": 12.0,
+        "feasible": true,
+        "value": 24.5333511315,
+        "count": 242,
+        "is_exact_optimum": true
+      },
+      {
+        "bitstring_qiskit": "0101101011",
+        "x_by_qubit": "1101011010",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0318",
+          "C0005",
+          "C0338",
+          "C0345"
+        ],
+        "n_selected": 6,
+        "cost": 16.0,
+        "capacity": 14.0,
+        "feasible": true,
+        "value": 21.8846506589,
+        "count": 241,
+        "is_exact_optimum": false
+      },
+      {
+        "bitstring_qiskit": "1101111000",
+        "x_by_qubit": "0001111011",
+        "ids": [
+          "C0318",
+          "C0183",
+          "C0005",
+          "C0338",
+          "C0345",
+          "C0170"
+        ],
+        "n_selected": 6,
+        "cost": 14.0,
+        "capacity": 14.0,
+        "feasible": true,
+        "value": 9.22202668877,
+        "count": 228,
+        "is_exact_optimum": false
+      },
+      {
+        "bitstring_qiskit": "0001101111",
+        "x_by_qubit": "1111011000",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0081",
+          "C0318",
+          "C0005",
+          "C0338"
+        ],
+        "n_selected": 6,
+        "cost": 16.0,
+        "capacity": 13.0,
+        "feasible": true,
+        "value": 23.295069253,
+        "count": 198,
+        "is_exact_optimum": false
+      },
+      {
+        "bitstring_qiskit": "1001100111",
+        "x_by_qubit": "1110011001",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0081",
+          "C0005",
+          "C0338",
+          "C0170"
+        ],
+        "n_selected": 6,
+        "cost": 14.0,
+        "capacity": 11.0,
+        "feasible": true,
+        "value": 23.9889668205,
+        "count": 196,
+        "is_exact_optimum": false
+      },
+      {
+        "bitstring_qiskit": "0011101011",
+        "x_by_qubit": "1101011100",
+        "ids": [
+          "C0031",
+          "C0079",
+          "C0318",
+          "C0005",
+          "C0338",
+          "C0208"
+        ],
+        "n_selected": 6,
+        "cost": 16.0,
+        "capacity": 15.0,
+        "feasible": true,
+        "value": 21.0742140028,
+        "count": 188,
+        "is_exact_optimum": false
+      }
+    ],
+    "transpilation": {
+      "logical_qubits": 10,
+      "physical_qubits_device": 19,
+      "physical_qubits_used": 10,
+      "depth_original": 77,
+      "depth_transpiled": 1383,
+      "one_qubit_gates_original": 44,
+      "two_qubit_gates_original": 96,
+      "multi_qubit_blocks_original": 21,
+      "one_qubit_gates_transpiled": 2427,
+      "two_qubit_gates_transpiled": 459,
+      "swap_count": 76,
+      "original_gate_counts": {
+        "barrier": 1,
+        "ccry": 21,
+        "cry": 9,
+        "cx": 60,
+        "measure": 10,
+        "rz": 30,
+        "x": 14,
+        "xx_plus_yy": 27
+      },
+      "transpiled_gate_counts": {
+        "barrier": 1,
+        "ecr": 459,
+        "measure": 10,
+        "rz": 1391,
+        "sx": 990,
+        "x": 46
+      },
+      "basis_gates": [
+        "ecr",
+        "rz",
+        "sx",
+        "x"
+      ],
+      "coupling_map": "heavy-hex, distance 3",
+      "optimization_level": 3,
+      "transpiler_seed": 2,
+      "transpiler_seeds_tried": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "two_qubit_gates_by_seed": {
+        "0": 467,
+        "1": 477,
+        "2": 459,
+        "3": 472,
+        "4": 471,
+        "5": 462,
+        "6": 477,
+        "7": 474,
+        "8": 458,
+        "9": 485
+      },
+      "physical_qubits_by_seed": {
+        "0": 11,
+        "1": 10,
+        "2": 10,
+        "3": 10,
+        "4": 10,
+        "5": 10,
+        "6": 10,
+        "7": 10,
+        "8": 11,
+        "9": 11
+      }
+    }
+  },
+  "stage1_model": "hybrid"
+}

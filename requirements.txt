@@ -1,0 +1,15 @@
+# Python 3.12. Exact versions used to produce the committed results.
+qiskit==2.6.2
+qiskit-aer==0.18.2
+scikit-learn==1.9.1
+numpy==2.5.4
+scipy==1.18.1
+pandas==3.1.1
+openpyxl==3.1.5
+matplotlib==3.11.2
+joblib==1.6.0
+# tests and the walkthrough notebook
+pytest==9.2.0
+nbformat==5.11.1
+nbconvert==7.17.2
+ipykernel==7.4.0

@@ -1,0 +1,156 @@
+{
+  "purpose": "the organisers' limits do not bind for these candidates, so both limits are tightened to test the constraint handling",
+  "rule": "each limit targets the smaller of the 25th percentile of what the groups of exactly K candidates need and one unit less than the optimum uses; the closest pair of limits that leaves at least one group feasible and excludes the original optimum is used",
+  "budget": 14.0,
+  "capacity": 11.0,
+  "feasible_selections": 5,
+  "brute_force": {
+    "ids": [
+      "C0031",
+      "C0079",
+      "C0081",
+      "C0005",
+      "C0338",
+      "C0170"
+    ],
+    "value": 23.9889668205,
+    "cost": 14.0,
+    "capacity": 11.0
+  },
+  "unbalanced_penalties": {
+    "valid": true,
+    "selections_below_optimum": 0,
+    "v_max": 10.484034869,
+    "A": 2.0968069738,
+    "lambda_1": 0.943563138209,
+    "lambda_2": 0.31452104607,
+    "A_over_vmax": 0.2,
+    "lambda2_over_vmax": 0.03,
+    "preferred_slack": 1.5,
+    "relative_gap": 0.00688393678926,
+    "gap": 1.20873745725,
+    "n_valid": 153,
+    "n_grid": 336
+  },
+  "unbalanced_ground_state_check": {
+    "valid": true,
+    "ground_index": 615,
+    "ground_energy": -23.9889668205,
+    "gap": 1.20873745725,
+    "relative_gap": 0.00688393678926,
+    "energy_max": 151.599144206,
+    "selections_below_optimum": 0
+  },
+  "slack_qubits": 13,
+  "slack_ground_state_check": {
+    "valid": true,
+    "ground_index": 615,
+    "ground_energy": -23.9889668205,
+    "gap": 1.20873745725,
+    "relative_gap": 0.000149784828484,
+    "energy_max": 8045.83672571,
+    "selections_below_optimum": 0
+  },
+  "qaoa_layers": 3,
+  "qaoa_exact_distribution": {
+    "p_optimal": 0.00536476155453,
+    "feasible_fraction": 0.020125803309,
+    "p_optimal_given_feasible": 0.266561362653,
+    "mean_value_of_feasible_over_optimum": 0.798289327251,
+    "energy_ratio": 0.875579829027
+  },
+  "qaoa_noiseless_sample": {
+    "shots": 8192,
+    "distinct_bitstrings": 809,
+    "p_optimal": 0.005126953125,
+    "feasible_fraction": 0.019287109375,
+    "p_optimal_given_feasible": 0.26582278481,
+    "mean_value_of_feasible_over_optimum": 0.799649676997,
+    "energy_ratio": 0.875209615618,
+    "best_feasible": {
+      "bitstring_qiskit": "1001100111",
+      "x_by_qubit": "1110011001",
+      "ids": [
+        "C0031",
+        "C0079",
+        "C0081",
+        "C0005",
+        "C0338",
+        "C0170"
+      ],
+      "n_selected": 6,
+      "cost": 14.0,
+      "capacity": 11.0,
+      "feasible": true,
+      "value": 23.9889668205,
+      "count": 42
+    }
+  },
+  "qaoa_selection_matches_brute_force": true,
+  "constraint_preserving_penalties": {
+    "valid": true,
+    "selections_below_optimum": 0,
+    "v_max": 10.484034869,
+    "A": 0.0,
+    "lambda_1": 0.943563138209,
+    "lambda_2": 0.31452104607,
+    "A_over_vmax": 0.0,
+    "lambda2_over_vmax": 0.03,
+    "preferred_slack": 1.5,
+    "relative_gap": 0.0313110302707,
+    "gap": 1.20873745725,
+    "n_valid": 23,
+    "n_grid": 42
+  },
+  "constraint_preserving_ground_state_check": {
+    "valid": true,
+    "ground_index": 615,
+    "ground_energy": -23.9889668205,
+    "gap": 1.20873745725,
+    "relative_gap": 0.0313110302707,
+    "energy_max": 14.6152390073,
+    "selections_below_optimum": 0
+  },
+  "constraint_preserving_exact_distribution": {
+    "p_optimal": 0.135502468773,
+    "feasible_fraction": 0.181314968239,
+    "p_optimal_given_feasible": 0.747331949971,
+    "mean_value_of_feasible_over_optimum": 0.944002089448,
+    "energy_ratio": 0.912784723825
+  },
+  "constraint_preserving_noiseless_sample": {
+    "shots": 8192,
+    "distinct_bitstrings": 195,
+    "p_optimal": 0.142333984375,
+    "feasible_fraction": 0.185668945312,
+    "p_optimal_given_feasible": 0.766600920447,
+    "mean_value_of_feasible_over_optimum": 0.943980774895,
+    "energy_ratio": 0.913558068531,
+    "best_feasible": {
+      "bitstring_qiskit": "1001100111",
+      "x_by_qubit": "1110011001",
+      "ids": [
+        "C0031",
+        "C0079",
+        "C0081",
+        "C0005",
+        "C0338",
+        "C0170"
+      ],
+      "n_selected": 6,
+      "cost": 14.0,
+      "capacity": 11.0,
+      "feasible": true,
+      "value": 23.9889668205,
+      "count": 1166
+    }
+  },
+  "constraint_preserving_selection_matches_brute_force": true,
+  "uniform_random_reference": {
+    "p_optimal": 0.0009765625,
+    "feasible_fraction": 0.0048828125,
+    "p_optimal_given_feasible": 0.2,
+    "mean_value_of_feasible_over_optimum": 0.756449571661,
+    "p_optimum_seen_in_shots": 0.999665846067
+  }
+}

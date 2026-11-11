@@ -1,0 +1,70 @@
+{
+  "organisers_sampling_and_split_seed": 42,
+  "cv_split_seed": 42,
+  "model_seed": 42,
+  "platt_fold_seed": 42,
+  "qaoa_start_point_seed": "config.QAOA_SEED + depth = 2027, 2028, 2029, 2030, 2031",
+  "optimiser": "COBYLA is deterministic; its only randomness is the seeded start points",
+  "simulator_seed": 1234,
+  "stage3_shot_sweep_seeds": [
+    1234,
+    1235,
+    1236,
+    1237,
+    1238,
+    1239
+  ],
+  "stage3_calibration_seeds": [
+    1335,
+    1336
+  ],
+  "kernel_check_seeds": [
+    1234,
+    1235,
+    1236,
+    1237,
+    1238,
+    1239,
+    1240,
+    1241,
+    1242,
+    1243,
+    1244,
+    1245
+  ],
+  "transpiler_seeds_tried": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "monte_carlo_seed": 777,
+  "bootstrap_seed": 99,
+  "shots": {
+    "stage2": 8192,
+    "stage3": 32768,
+    "stage3_submitted_estimate": 1048576,
+    "stage3_counter_noisy": 1024,
+    "kernel_check": 8192
+  },
+  "monte_carlo_trials": 1000000,
+  "bootstrap_rounds": 200,
+  "noise_model": {
+    "one_qubit_depolarizing": 0.0003,
+    "two_qubit_depolarizing": 0.008,
+    "readout_p1_given_0": 0.01,
+    "readout_p0_given_1": 0.025
+  },
+  "basis_gates": [
+    "ecr",
+    "rz",
+    "sx",
+    "x"
+  ]
+}

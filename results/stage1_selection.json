@@ -1,0 +1,253 @@
+{
+  "selection": {
+    "submitted_model": "hybrid",
+    "submitted_params": {
+      "weight": 0.5,
+      "logistic": {
+        "C": 0.3
+      },
+      "quantum_kernel": {
+        "reducer": "pls",
+        "reps": 2,
+        "bandwidth": 0.1,
+        "C": 0.1
+      }
+    },
+    "chosen_by": "design (config.SUBMITTED_MODEL), not by score",
+    "classical_comparator": "logistic",
+    "submitted_minus_classical": {
+      "roc_auc": {
+        "difference": 0.000539083557951,
+        "standard_error": 0.00441885698075
+      },
+      "pr_auc": {
+        "difference": -0.00678599640772,
+        "standard_error": 0.0107153214215
+      },
+      "precision_at_10": {
+        "difference": 0.02,
+        "standard_error": 0.0106904496765
+      },
+      "recall_at_10": {
+        "difference": 0.0285714285714,
+        "standard_error": 0.0152720709664
+      },
+      "brier": {
+        "difference": 0.000226260356623,
+        "standard_error": 0.000826164028794
+      },
+      "log_loss": {
+        "difference": -0.00351710783773,
+        "standard_error": 0.00407204312081
+      }
+    },
+    "logistic_params": {
+      "C": 0.3
+    },
+    "quantum_kernel_params": {
+      "reducer": "pls",
+      "reps": 2,
+      "bandwidth": 0.1,
+      "C": 0.1
+    },
+    "rbf_kernel_params": {
+      "reducer": "pls",
+      "bandwidth": 0.1,
+      "C": 0.1
+    },
+    "cv": {
+      "splits": 5,
+      "repeats": 3,
+      "seed": 42
+    },
+    "training_rows": 300,
+    "training_positives": 35
+  },
+  "reliability_out_of_fold": {
+    "logistic": [
+      {
+        "n": 180,
+        "p_min": 0.00603788018165,
+        "p_max": 0.0525380812444,
+        "mean_predicted": 0.0347617119867,
+        "observed_rate": 0.0611111111111
+      },
+      {
+        "n": 180,
+        "p_min": 0.0529902270723,
+        "p_max": 0.0808060770083,
+        "mean_predicted": 0.0661484119823,
+        "observed_rate": 0.0944444444444
+      },
+      {
+        "n": 180,
+        "p_min": 0.0809079945783,
+        "p_max": 0.116672088072,
+        "mean_predicted": 0.0991449546129,
+        "observed_rate": 0.111111111111
+      },
+      {
+        "n": 180,
+        "p_min": 0.116780552291,
+        "p_max": 0.162360892576,
+        "mean_predicted": 0.137582881273,
+        "observed_rate": 0.15
+      },
+      {
+        "n": 180,
+        "p_min": 0.163325118513,
+        "p_max": 0.591850280747,
+        "mean_predicted": 0.23977294008,
+        "observed_rate": 0.166666666667
+      }
+    ],
+    "boosting": [
+      {
+        "n": 180,
+        "p_min": 0.00403053838533,
+        "p_max": 0.0229327510804,
+        "mean_predicted": 0.0143227499621,
+        "observed_rate": 0.0777777777778
+      },
+      {
+        "n": 180,
+        "p_min": 0.0229613140409,
+        "p_max": 0.0446728799653,
+        "mean_predicted": 0.0326228291235,
+        "observed_rate": 0.111111111111
+      },
+      {
+        "n": 180,
+        "p_min": 0.0449088520187,
+        "p_max": 0.0790241817315,
+        "mean_predicted": 0.0608263404692,
+        "observed_rate": 0.0944444444444
+      },
+      {
+        "n": 180,
+        "p_min": 0.0794279488413,
+        "p_max": 0.182753726779,
+        "mean_predicted": 0.123582343544,
+        "observed_rate": 0.127777777778
+      },
+      {
+        "n": 180,
+        "p_min": 0.183063098942,
+        "p_max": 0.816776201831,
+        "mean_predicted": 0.31162829122,
+        "observed_rate": 0.172222222222
+      }
+    ],
+    "rbf_kernel": [
+      {
+        "n": 180,
+        "p_min": 0.0582912875576,
+        "p_max": 0.113963849792,
+        "mean_predicted": 0.103300919792,
+        "observed_rate": 0.0944444444444
+      },
+      {
+        "n": 180,
+        "p_min": 0.113980488596,
+        "p_max": 0.116698200338,
+        "mean_predicted": 0.116267112558,
+        "observed_rate": 0.116666666667
+      },
+      {
+        "n": 180,
+        "p_min": 0.116698608957,
+        "p_max": 0.116866594072,
+        "mean_predicted": 0.116785933393,
+        "observed_rate": 0.05
+      },
+      {
+        "n": 180,
+        "p_min": 0.116866805582,
+        "p_max": 0.120319817723,
+        "mean_predicted": 0.117592501203,
+        "observed_rate": 0.177777777778
+      },
+      {
+        "n": 180,
+        "p_min": 0.120346344237,
+        "p_max": 0.477892579755,
+        "mean_predicted": 0.142513845311,
+        "observed_rate": 0.144444444444
+      }
+    ],
+    "quantum_kernel": [
+      {
+        "n": 180,
+        "p_min": 0.0562303026541,
+        "p_max": 0.0985889316847,
+        "mean_predicted": 0.0890221907706,
+        "observed_rate": 0.122222222222
+      },
+      {
+        "n": 180,
+        "p_min": 0.0986173229523,
+        "p_max": 0.107092591281,
+        "mean_predicted": 0.102979890997,
+        "observed_rate": 0.0833333333333
+      },
+      {
+        "n": 180,
+        "p_min": 0.107126367964,
+        "p_max": 0.115032646015,
+        "mean_predicted": 0.111192540479,
+        "observed_rate": 0.116666666667
+      },
+      {
+        "n": 180,
+        "p_min": 0.115034939171,
+        "p_max": 0.118858455624,
+        "mean_predicted": 0.116363342741,
+        "observed_rate": 0.0888888888889
+      },
+      {
+        "n": 180,
+        "p_min": 0.118871167527,
+        "p_max": 0.775976979299,
+        "mean_predicted": 0.163362554613,
+        "observed_rate": 0.172222222222
+      }
+    ],
+    "hybrid": [
+      {
+        "n": 180,
+        "p_min": 0.0491828633525,
+        "p_max": 0.0788153321148,
+        "mean_predicted": 0.070004750172,
+        "observed_rate": 0.0555555555556
+      },
+      {
+        "n": 180,
+        "p_min": 0.0788170323413,
+        "p_max": 0.0932838991764,
+        "mean_predicted": 0.085722921949,
+        "observed_rate": 0.105555555556
+      },
+      {
+        "n": 180,
+        "p_min": 0.0934205581913,
+        "p_max": 0.111638469511,
+        "mean_predicted": 0.102639122315,
+        "observed_rate": 0.116666666667
+      },
+      {
+        "n": 180,
+        "p_min": 0.11164787153,
+        "p_max": 0.140034400712,
+        "mean_predicted": 0.123887934741,
+        "observed_rate": 0.133333333333
+      },
+      {
+        "n": 180,
+        "p_min": 0.140135972784,
+        "p_max": 0.601346560631,
+        "mean_predicted": 0.197910980591,
+        "observed_rate": 0.172222222222
+      }
+    ]
+  }
+}

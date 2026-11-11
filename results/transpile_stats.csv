@@ -1,0 +1,12 @@
+circuit,logical_qubits,physical_qubits_used,physical_qubits_device,depth_original,depth_transpiled,one_qubit_gates_original,two_qubit_gates_original,multi_qubit_blocks_original,one_qubit_gates_transpiled,two_qubit_gates_transpiled,swap_count,transpiler_seed
+stage 1 kernel overlap circuit,6,6,19,51,146,68,40,0,258,38,0,0
+stage 2 penalty QAOA p=1,10,10,19,21,294,30,45,0,898,146,34,7
+stage 2 penalty QAOA p=2,10,10,19,33,487,50,90,0,1848,300,76,5
+stage 2 penalty QAOA p=3,10,10,19,45,728,70,135,0,2740,479,119,8
+stage 2 penalty QAOA p=4,10,10,19,57,1070,90,180,0,3625,666,164,0
+stage 2 penalty QAOA p=5,10,10,19,69,1541,110,225,0,4393,894,206,5
+stage 2 constraint-preserving QAOA p=1,10,10,19,71,1272,24,78,21,2035,407,70,6
+stage 2 constraint-preserving QAOA p=2,10,10,19,74,1348,34,87,21,2222,431,72,6
+stage 2 constraint-preserving QAOA p=3,10,10,19,77,1383,44,96,21,2427,459,76,2
+stage 3 campaign circuit (6 RY),6,6,19,2,5,6,0,0,24,0,0,0
+stage 3 counter circuit,13,13,19,4,1679,6,0,2,2630,637,143,1

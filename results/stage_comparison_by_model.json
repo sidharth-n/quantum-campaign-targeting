@@ -1,0 +1,157 @@
+[
+  {
+    "model": "hybrid",
+    "submitted": true,
+    "top10": [
+      "C0031",
+      "C0079",
+      "C0081",
+      "C0318",
+      "C0183",
+      "C0005",
+      "C0338",
+      "C0208",
+      "C0345",
+      "C0170"
+    ],
+    "selected_ids": [
+      "C0031",
+      "C0079",
+      "C0081",
+      "C0318",
+      "C0005",
+      "C0170"
+    ],
+    "objective_value": 24.5333511315,
+    "budget_used": 15.0,
+    "capacity_used": 12.0,
+    "feasible_selections": 210,
+    "p_at_least_3": 0.338494912988,
+    "top10_shared_with_submitted": 10,
+    "selected_shared_with_submitted": 6
+  },
+  {
+    "model": "logistic",
+    "submitted": false,
+    "top10": [
+      "C0031",
+      "C0079",
+      "C0081",
+      "C0183",
+      "C0318",
+      "C0208",
+      "C0338",
+      "C0265",
+      "C0059",
+      "C0170"
+    ],
+    "selected_ids": [
+      "C0031",
+      "C0079",
+      "C0318",
+      "C0338",
+      "C0059",
+      "C0170"
+    ],
+    "objective_value": 18.9963601566,
+    "budget_used": 14.0,
+    "capacity_used": 13.0,
+    "feasible_selections": 210,
+    "p_at_least_3": 0.203208280001,
+    "top10_shared_with_submitted": 8,
+    "selected_shared_with_submitted": 4
+  },
+  {
+    "model": "boosting",
+    "submitted": false,
+    "top10": [
+      "C0031",
+      "C0374",
+      "C0079",
+      "C0081",
+      "C0327",
+      "C0170",
+      "C0183",
+      "C0059",
+      "C0349",
+      "C0208"
+    ],
+    "selected_ids": [
+      "C0031",
+      "C0374",
+      "C0079",
+      "C0081",
+      "C0327",
+      "C0170"
+    ],
+    "objective_value": 49.0765396639,
+    "budget_used": 13.0,
+    "capacity_used": 11.0,
+    "feasible_selections": 210,
+    "p_at_least_3": 0.654569027153,
+    "top10_shared_with_submitted": 6,
+    "selected_shared_with_submitted": 4
+  },
+  {
+    "model": "rbf_kernel",
+    "submitted": false,
+    "top10": [
+      "C0079",
+      "C0031",
+      "C0081",
+      "C0005",
+      "C0183",
+      "C0374",
+      "C0087",
+      "C0345",
+      "C0388",
+      "C0397"
+    ],
+    "selected_ids": [
+      "C0079",
+      "C0005",
+      "C0183",
+      "C0374",
+      "C0087",
+      "C0397"
+    ],
+    "objective_value": 4.46457301646,
+    "budget_used": 11.0,
+    "capacity_used": 14.0,
+    "feasible_selections": 210,
+    "p_at_least_3": 0.0244452563601,
+    "top10_shared_with_submitted": 6,
+    "selected_shared_with_submitted": 2
+  },
+  {
+    "model": "quantum_kernel",
+    "submitted": false,
+    "top10": [
+      "C0031",
+      "C0079",
+      "C0081",
+      "C0005",
+      "C0318",
+      "C0387",
+      "C0338",
+      "C0087",
+      "C0345",
+      "C0028"
+    ],
+    "selected_ids": [
+      "C0031",
+      "C0079",
+      "C0081",
+      "C0005",
+      "C0318",
+      "C0087"
+    ],
+    "objective_value": 32.8140409946,
+    "budget_used": 15.0,
+    "capacity_used": 12.0,
+    "feasible_selections": 210,
+    "p_at_least_3": 0.510163534898,
+    "top10_shared_with_submitted": 7,
+    "selected_shared_with_submitted": 5
+  }
+]
