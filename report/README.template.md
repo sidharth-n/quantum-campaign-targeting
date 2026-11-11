@@ -400,7 +400,7 @@ python -m pytest                 # all tests, including one full rerun of the pi
 python -m pytest -m "not slow"   # the same without the full rerun
 ```
 
-Timings on my laptop (Apple silicon, 10 cores): the pipeline takes two to four minutes, the extension studies one to two minutes, the full test suite four to six minutes, the fast tests under a minute. The code needs no account, token or network access after the install and uses nothing specific to my machine, so the same three commands should work in a cloud environment such as Google Colab or a GitHub Codespace; I have not run it there.
+Timings on my laptop (Apple silicon, 10 cores): the pipeline takes two to four minutes, the extension studies one to two minutes, the full test suite three to five minutes, the fast tests under a minute. The code needs no account, token or network access after the install and uses nothing specific to my machine, so the same three commands should work in a cloud environment such as Google Colab or a GitHub Codespace; I have not run it there.
 
 `run_pipeline.py` writes the five required files to the repository root and the detail files to `results/`, reads the three stage files back and stops if an id or probability differs between them (`results/traceability.csv`), and then refreshes this README from the result files (`build_report.py`). `python run_pipeline.py --out some/dir` writes everything to another folder and leaves the repository untouched. The notebook `notebooks/walkthrough.ipynb` is committed with its outputs and can be rerun with Jupyter.
 
