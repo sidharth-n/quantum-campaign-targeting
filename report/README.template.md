@@ -396,7 +396,7 @@ Timings on my laptop (Apple silicon, 10 cores): the pipeline takes two to four m
 
 **Shots.** Stage 2: {seeds[shots][stage2]} per circuit. Stage 3: {seeds[shots][stage3_submitted_estimate]:,} for the submitted estimate, {seeds[shots][stage3]:,} for the noiseless, noisy and calibration runs, {seeds[shots][stage3_counter_noisy]:,} for the noisy counter circuit. Kernel check: {seeds[shots][kernel_check]} per pair. Monte Carlo: {seeds[monte_carlo_trials]:,} draws. Bootstrap: {seeds[bootstrap_rounds]} refits.
 
-**Reproducibility.** `tests/test_reproducibility.py` runs the whole pipeline into a temporary folder and compares every result file with the committed one, byte for byte (only `results/environment.json` is excluded, since it records the machine). I ran it on one machine; across platforms the last digits of floating-point results can differ, which is why the Stage 1 probabilities are rounded once to 12 decimals before anything else uses them.
+**Reproducibility.** `tests/test_reproducibility.py` runs the whole pipeline into a temporary folder and compares every result file with the committed one, byte for byte (only `results/environment.json` is excluded, since it records the machine). I ran it on one machine, both in my working copy and from a fresh clone of this repository with a new virtual environment built from `requirements.txt` alone. Across platforms the last digits of floating-point results can differ, which is why the Stage 1 probabilities are rounded once to 12 decimals before anything else uses them.
 
 **What the tests cover.** No test-set leakage (scaler statistics, one-hot levels, predictions independent of the other test rows, cross-validation splits, calibration scores that never see their own row or label); the tie-break rule; the schema of the three result files; ids and probabilities identical across the files; Stage 2 validity and the objective recomputed from scratch; brute force against an independent enumeration; both QUBO encodings against brute force on the organisers' instance, the stress instance and random instances; the stress rule keeping its two properties; Ising energies against QUBO energies on all states; emulators against Qiskit state vectors; Dicke state; Qiskit bit order; Stage 3 exact value three ways; qubit-to-customer order; readout mitigation on a known case; the counter circuit; the traceability check refusing corrupted files; this README matching the result files; byte-identical reruns.
 
@@ -426,7 +426,7 @@ Timings on my laptop (Apple silicon, 10 cores): the pipeline takes two to four m
 - **QAOA is trained on the exact distribution.** A real device would have to estimate the objective from shots, which adds noise to the optimisation itself. I did not study that.
 - **Simulated noise only.** No real hardware. The noise model has depolarising and readout errors with stated values; it has no decoherence during idle time, no crosstalk and no drift.
 - **The limits do not bind.** The constraint handling is therefore tested on the stress instance, not on the organisers' instance.
-- **One machine.** Byte-identical reruns were checked on one machine only.
+- **One machine.** Byte-identical reruns were checked on one machine only (working copy and fresh clone).
 
 ## 12. References
 
