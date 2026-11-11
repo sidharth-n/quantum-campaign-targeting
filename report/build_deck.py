@@ -2,7 +2,7 @@
 
     python report/build_deck.py
 
-Ten 16:9 slides. Every number is read from the same result files as the README.
+Twelve 16:9 slides. Every number is read from the same result files as the README.
 """
 import sys
 import textwrap
@@ -110,6 +110,7 @@ def build(path=ROOT / "presentation.pdf"):
     s2, s3, prop, stress, sel, kernel = r["s2"], r["s3"], r["prop"], r["stress"], r["sel"], r["kernel"]
     q, mixer, uniform = s2["qaoa"], s2["constraint_preserving_qaoa"], s2["qaoa"]["uniform_random_reference"]
     figures = ROOT / "results" / "figures"
+    ext = build_report.extension_values(r)
     deck = Deck(path)
 
     # 1 ------------------------------------------------------------------ title
@@ -194,7 +195,7 @@ def build(path=ROOT / "presentation.pdf"):
     # 5 ------------------------------------------------------------------ stage 2 results
     figure_slide(deck, "Stage 2: what QAOA adds, measured per shot", "Select", [
         f"Penalty QAOA, p = 3: {q['exact_output_distribution']['p_optimal']:.1%} of the probability on the optimum, "
-        f"{d['amp_penalty']:.0f} times a uniform sampler. Constraint-preserving QAOA (Dicke state + XY mixer): "
+        f"{d['amp_penalty']:.0f} times a random bitstring and {ext['ideal_over_valid']:.1f} times a random valid selection of six. Constraint-preserving QAOA (Dicke state + XY mixer): "
         f"{mixer['exact_output_distribution']['p_optimal']:.1%}, every bitstring has exactly six ones.",
         f"The best feasible measured bitstring is the brute-force optimum, gap {s2['optimality_gap']:.1f}. Both variants agree.",
         f"Honest reference: with {q['shots']} shots, random bitstrings contain the optimum {uniform['p_optimum_seen_in_shots']:.2%} of the time. "
@@ -247,7 +248,37 @@ def build(path=ROOT / "presentation.pdf"):
     ], 7.05, 5.1, width=52, size=11.5, gap=0.13)
     deck.save(fig)
 
-    # 9 ------------------------------------------------------------------ business
+    # 9 ------------------------------------------------------------------ beyond the brief
+    corr, ae, hw = r["corr"], r["ae"], r["hw"]
+    fig, ax = deck.slide("Three questions the brief does not ask", "Beyond the brief")
+    stat(ax, 0.7, 4.2, 3.8, f"{ext['loss_first']:.0%} to {ext['loss_last']:.0%}",
+         f"model's chance that the campaign loses money when the six customers are correlated (factor parameter 0 to {ext['rho_max']:.1f})", NOISY)
+    stat(ax, 4.75, 4.2, 3.8, f"{ext['ae_ratio']:.1f}x",
+         f"smaller error with amplitude estimation at {ext['ae_cost']:,} state preparations (ideal simulator only)")
+    stat(ax, 8.8, 4.2, 3.8, f"{ext['t3']['p_optimal']:.2%}",
+         f"of shots return the optimum at p = 3 on the IBM Torino snapshot (random valid selection {ext['random_valid']:.2%}, ideal {ext['ideal_p3']:.2%})")
+    points = [
+        f"Not independent? A one-factor correlation model on an entangled {corr['circuit']['logical_qubits']}-qubit circuit keeps every Stage 1 probability. "
+        f"P(at least 3) barely moves ({ext['p_first']:.3f} to {ext['p_last']:.3f}) and the expected net value not at all, while the model's loss probability doubles (payoff = expected deposit value).",
+        f"Fewer circuit runs? On an ideal simulator the error of amplitude estimation falls with slope {ext['ae_slope']:.2f} (direct sampling {ext['ae_direct_slope']:.2f}). "
+        f"On my noise model it fails: error {ext['ae_noisy_rmse']:.2f} against {ext['ae_noisy_direct']:.3f}. One Grover step already needs {ext['ae_one_step_gates']} two-qubit gates.",
+        f"Real machines? On IBM Torino and Brisbane calibration data the Stage 3 estimate is within its standard error after readout mitigation. "
+        f"For QAOA, Torino is {ext['torino_over_stated']:.1f} times better than my stated noise model, and Brisbane matches it.",
+    ]
+    if hw is not None:
+        points.append(
+            f"Run on real hardware: IBM {hw['backend']} gives {hw['stage3']['mitigated']['estimate']:.3f} for Stage 3 after readout mitigation "
+            f"(exact {hw['stage3']['exact']:.3f}), job {hw['job_id']}."
+        )
+    bullets(ax, points, 0.7, 3.75, width=118, size=13, gap=0.16)
+    deck.save(fig)
+
+    # 10 ----------------------------------------------------------------- beyond the brief, figure
+    figure_slide(deck, "Same answer, a wider picture around it", "Beyond the brief", [
+        "Every panel is checked against exact maths, rebuilt by python run_extensions.py, and none of it enters the three stage files.",
+    ], figures / "beyond_the_brief.png")
+
+    # 11 ----------------------------------------------------------------- business
     fig, ax = deck.slide("What the bank should do", "Business impact")
     bullets(ax, [
         f"Contact {d['ids']}. Expected net value {s2['objective_value']:.2f}, cost {s2['budget_used']:.0f} of {s2['constraints']['budget']:.0f}, "
@@ -262,11 +293,12 @@ def build(path=ROOT / "presentation.pdf"):
     ], 0.7, H - 1.95, width=98, size=15.5, gap=0.3)
     deck.save(fig)
 
-    # 10 ----------------------------------------------------------------- reproduce
+    # 12 ----------------------------------------------------------------- reproduce
     fig, ax = deck.slide("Reproduce it", "Code and reproducibility")
-    panel(ax, 0.7, 4.15, 11.9, 1.6)
+    panel(ax, 0.7, 3.85, 11.9, 1.9)
     ax.text(0.95, 5.5, "pip install -r requirements.txt\n"
             "python run_pipeline.py     # every result file and figure, a few minutes on a laptop\n"
+            "python run_extensions.py   # the beyond-the-brief studies, under two minutes\n"
             "python -m pytest           # the test suite, including a byte-for-byte rerun",
             fontsize=13, color=INK, va="top", family="monospace", linespacing=1.6)
     bullets(ax, [
@@ -274,7 +306,7 @@ def build(path=ROOT / "presentation.pdf"):
         "Tests cover leakage, the tie-break rule, file schemas, id and probability traceability, QUBO against brute force, "
         "Ising against QUBO, emulators against Qiskit, bit order, the Stage 3 maths and readout mitigation.",
         "The README is filled in from the result files by a script, so the report cannot drift from the data.",
-    ], 0.7, 3.75, width=104, size=14, gap=0.22)
+    ], 0.7, 3.4, width=104, size=13.5, gap=0.2)
     ax.text(0.7, 0.95, REPO, fontsize=16, color=QUANTUM, weight="bold", va="center")
     deck.save(fig)
 

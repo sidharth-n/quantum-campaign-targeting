@@ -86,3 +86,29 @@ HEAVY_HEX_DISTANCE = 3    # CouplingMap.from_heavy_hex(3): 19 physical qubits
 
 # --------------------------------------------------------------------------- error propagation
 BOOTSTRAP_ROUNDS = 200
+
+# --------------------------------------------------------------------------- beyond the brief (run_extensions.py)
+# These settings feed the extension studies only. They never touch the three stage files.
+EXT_SEED = 4242                               # Aer seed (seed_simulator) for every sampled extension circuit
+EXT_RESULTS = ROOT / "results" / "extensions"
+
+# correlated customers: one-factor Gaussian copula loaded on a small "market" register
+CORRELATION_GRID = (0.0, 0.1, 0.2, 0.3, 0.5)  # common-factor correlation rho
+FACTOR_QUBITS = 3                             # 2^3 equally likely market scenarios
+SHOTS_CORRELATED = 32768
+REVENUE_TAIL = 0.25                           # tail level for value at risk and expected shortfall (the worst quarter;
+                                              # P(nobody subscribes) is above 5%, so a 5% tail would sit on the floor)
+
+# amplitude estimation of P(at least threshold)
+AE_SCHEDULES = (1, 2, 3, 4, 5, 6)             # schedule j uses Grover powers 0, 1, 2, 4, ..., 2^(j-1)
+AE_SHOTS_PER_POWER = 64
+AE_REPEATS = 300                              # independent repetitions per schedule (blocks of one seeded run per power)
+
+# IBM device snapshots (calibration data shipped with qiskit-ibm-runtime, simulated with Aer)
+IBM_SNAPSHOTS = ("FakeTorino", "FakeBrisbane")
+SHOTS_IBM = 32768                             # stage 3 circuit and its calibration circuits
+SHOTS_IBM_QAOA = 2 ** 17                      # QAOA circuits: exact density matrix, so shots are cheap
+IBM_QAOA_LAYERS = (1, 2, 3)
+
+# real device run (scripts/run_ibm_hardware.py; optional, needs an IBM Quantum account)
+HARDWARE_RHO = 0.3                            # correlation of the correlated-customers circuit sent to the device

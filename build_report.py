@@ -52,6 +52,10 @@ def load(root: Path) -> dict:
         "models": js("results/stage_comparison_by_model.json"),
         "seeds": js("results/seeds.json"),
         "env": js("results/environment.json"),
+        "corr": js("results/extensions/correlated_customers.json"),
+        "ae": js("results/extensions/amplitude_estimation.json"),
+        "ibm": js("results/extensions/ibm_snapshots.json"),
+        "hw": js("results/hardware/ibm_hardware.json") if (root / "results" / "hardware" / "ibm_hardware.json").exists() else None,
     }
 
 
@@ -283,10 +287,171 @@ def derived(r: dict) -> dict:
     }
 
 
+def extension_tables(r: dict) -> dict:
+    corr, ae, ibm, hw = r["corr"], r["ae"], r["ibm"], r["hw"]
+    out = {}
+    out["correlated"] = table(
+        ["Correlation rho", "Mean pairwise correlation of outcomes", f"P(at least {corr['threshold']}), exact",
+         "Entangled circuit, state vector", f"Entangled circuit, {corr['shots']:,} shots", "P(none or one subscribes)",
+         "P(campaign loses money)", "Standard deviation of net value", f"Mean net value in the worst {corr['revenue_tail']:.0%}"],
+        [[f"{s['rho']:.1f}", f"{s['mean_pairwise_correlation']:.3f}", f"{s['exact']:.4f}", f"{s['statevector']:.4f}",
+          f"{s['sampled']['estimate']:.4f} ± {s['sampled']['standard_error']:.4f}", f"{s['probability_none_or_one']:.3f}",
+          f"{s['revenue']['probability_of_loss']:.3f}", f"{s['revenue']['standard_deviation']:.1f}",
+          f"{s['revenue']['expected_shortfall']:.1f}"] for s in corr["scenarios"]],
+    )
+    out["amplitude"] = table(
+        ["Grover powers used", "Applications of A", "Amplitude estimation, ideal", "Direct sampling, ideal (formula)",
+         "Direct / amplitude estimation", "Amplitude estimation, noise model", "Direct sampling, noise model"],
+        [[", ".join(map(str, s["grover_powers"])), f"{s['applications_of_A']:,}", f"{s['rmse']:.5f}",
+          f"{s['direct_sampling_rmse_measured']:.5f} ({s['direct_sampling_rmse_formula']:.5f})",
+          f"{s['error_ratio_direct_over_amplitude_estimation']:.1f}", f"{s['noisy_rmse']:.4f}",
+          f"{s['noisy_direct_sampling_rmse_measured']:.4f}"] for s in ae["schedules"]],
+    )
+    out["amplitude_noisy"] = table(
+        ["Grover power", "Two-qubit gates (heavy-hex)", "Depth", "P(good), ideal", "P(good), stated noise model"],
+        [[e["power"], f"{e['two_qubit_gates_transpiled']:,}", f"{e['depth_transpiled']:,}", f"{e['good_probability_ideal']:.4f}",
+          f"{e['good_probability_noisy']:.4f}"] for e in ae["noisy"]],
+    )
+    out["ibm_devices"] = table(
+        ["Snapshot", "Qubits", "Two-qubit gate", "Median two-qubit error", "Median readout error"],
+        [[b["snapshot"], b["qubits"], b["two_qubit_gate"].upper(), f"{b['median_two_qubit_error']:.4f}",
+          f"{b['median_readout_error']:.4f}"] for b in ibm["backends"]],
+    )
+    out["ibm_stage3"] = table(
+        ["Snapshot", "Physical qubits (customer 0 to 5)", "Unmitigated", "Error", "Readout mitigated", "Error", "Standard error"],
+        [[b["snapshot"], ", ".join(map(str, b["stage3"]["physical_qubits"])), f"{b['stage3']['unmitigated']['estimate']:.6f}",
+          f"{b['stage3']['unmitigated']['error']:+.6f}", f"{b['stage3']['mitigated']['estimate']:.6f}",
+          f"{b['stage3']['mitigated']['error']:+.6f}", f"{b['stage3']['mitigated']['standard_error']:.6f}"]
+         for b in ibm["backends"]],
+    )
+    sources = [("Stated noise model", ibm["stated_noise_model"]["stage2"])] + [(b["snapshot"], b["stage2"]) for b in ibm["backends"]]
+    out["ibm_stage2"] = table(
+        ["Noise source", "p", "Depth", "Two-qubit gates", "SWAPs (routing diagnostic)", "P(optimum), ideal", "P(optimum)",
+         "P(six selected)", "P(optimum given six selected)"],
+        [[name, e["layers"], e["depth_transpiled"], f"{e['two_qubit_gates_transpiled']} {e['two_qubit_gate'].upper()}",
+          e["swap_count"], f"{e['p_optimal_ideal']:.4f}", f"{e['p_optimal']:.4f} ± {e['p_optimal_standard_error']:.4f}",
+          f"{e['right_size_fraction']:.3f}",
+          f"{e['p_optimal_given_right_size']:.4f} ± {e['p_optimal_given_right_size_standard_error']:.4f}"]
+         for name, rows in sources for e in rows],
+    )
+    out["noise_limitation"] = (
+        "- **Simulated noise only.** No real hardware. The stated noise model has depolarising and readout errors only; it "
+        "has no decoherence during idle time, no crosstalk and no drift. The IBM snapshots of section 11.3 add thermal "
+        "relaxation from real calibration data but are still simulations."
+        if hw is None else
+        f"- **One hardware job.** The run on {hw['backend']} in section 11.4 is a single job. Every other noisy number is a "
+        "simulation: the stated noise model has depolarising and readout errors only, and the IBM snapshots of section 11.3 "
+        "add thermal relaxation from past calibration data, without crosstalk or drift."
+    )
+    if hw is None:
+        out["hardware"] = (
+            "`scripts/run_ibm_hardware.py` sends the Stage 3 circuit, its two readout-calibration circuits, the "
+            "correlated-customers circuit and the depth-1 QAOA circuit to a real IBM processor in one job. The returned "
+            "counts get the same decoding as the simulated runs, and the Stage 3 circuit gets the same readout mitigation "
+            "(`src/campaign/real_device.py`). It needs an IBM Quantum "
+            "API key. I did not run it for this submission, so every noisy number in this report is a simulation."
+        )
+        out["hardware_summary"] = ""
+    else:
+        s3, cc, qa = hw["stage3"], hw["correlated"], hw["qaoa_p1"]
+        rows = [
+            ["Stage 3 circuit, unmitigated", f"{s3['unmitigated']['estimate']:.4f}", f"{s3['exact']:.4f}",
+             f"{s3['unmitigated']['error']:+.4f}", f"{s3['unmitigated']['standard_error']:.4f}"],
+            ["Stage 3 circuit, readout mitigated", f"{s3['mitigated']['estimate']:.4f}", f"{s3['exact']:.4f}",
+             f"{s3['mitigated']['error']:+.4f}", f"{s3['mitigated']['standard_error']:.4f}"],
+            [f"Correlated-customers circuit (rho = {cc['rho']:.1f}), unmitigated", f"{cc['unmitigated']['estimate']:.4f}",
+             f"{cc['exact']:.4f}", f"{cc['unmitigated']['error']:+.4f}", f"{cc['unmitigated']['standard_error']:.4f}"],
+        ]
+        out["hardware"] = (
+            f"I ran the circuits on **{hw['backend']}**, a real {hw['backend_qubits']}-qubit IBM processor "
+            f"(job `{hw['job_id']}`, {hw['shots_per_circuit']:,} shots per circuit, raw counts in "
+            "`results/hardware/ibm_hardware.json`). One job held the Stage 3 circuit, its two readout-calibration circuits "
+            "on the same physical qubits, the correlated-customers circuit and the depth-1 QAOA circuit.\n\n"
+            + table(["Circuit on the real device", f"P(at least {r['corr']['threshold']})", "Exact", "Error", "Standard error"], rows)
+            + f"\n\nThe Stage 3 circuit ran on physical qubits {', '.join(map(str, hw['circuits']['stage3']['physical_qubit_of_customer']))}. "
+            f"The depth-1 QAOA circuit ({hw['circuits']['qaoa_p1']['two_qubit_gates_transpiled']} two-qubit gates after "
+            f"transpilation) returned the optimal selection in {qa['optimum_count']} of {qa['shots']:,} shots "
+            f"({qa['p_optimal']:.4f}; random bitstrings give {qa['uniform_reference_p_optimal']:.4f}) and a selection of exactly "
+            f"six customers in {qa['right_size_fraction']:.1%} of them. This is a single job on one day: it shows the "
+            "pipeline runs end to end on hardware, not how the device behaves on average."
+        )
+        out["hardware_summary"] = (
+            f"\n| Does it run on a real quantum computer? | Yes. On IBM's {hw['backend']} the Stage 3 circuit gives "
+            f"{s3['mitigated']['estimate']:.3f} after readout mitigation (exact {s3['exact']:.3f}). |"
+        )
+    return out
+
+
+def extension_values(r: dict) -> dict:
+    corr, ae, ibm = r["corr"], r["ae"], r["ibm"]
+    first, last = corr["scenarios"][0], corr["scenarios"][-1]
+    best = ae["best_schedule"]
+    torino, brisbane = ibm["backends"][0], ibm["backends"][1]
+    reference = ibm["uniform_reference"]
+    t3, b3, m3 = torino["stage2"][-1], brisbane["stage2"][-1], ibm["stated_noise_model"]["stage2"][-1]
+    one_step = ae["noisy"][1]
+    deep = ae["noisy"][-1]
+    return {
+        "rho_max": last["rho"],
+        "scenarios": 2 ** corr["factor_qubits"],
+        "pair_last": last["mean_pairwise_correlation"],
+        "p_first": first["exact"], "p_last": last["exact"],
+        "loss_first": first["revenue"]["probability_of_loss"], "loss_last": last["revenue"]["probability_of_loss"],
+        "loss_ratio": last["revenue"]["probability_of_loss"] / first["revenue"]["probability_of_loss"],
+        "low_first": first["probability_none_or_one"], "low_last": last["probability_none_or_one"],
+        "sd_first": first["revenue"]["standard_deviation"], "sd_last": last["revenue"]["standard_deviation"],
+        "es_first": first["revenue"]["expected_shortfall"], "es_last": last["revenue"]["expected_shortfall"],
+        "expected_net": first["revenue"]["expected_net_value"],
+        "expected_subscribers": first["expected_subscribers"],
+        "max_statevector_error": max(s["statevector_max_abs_outcome_error"] for s in corr["scenarios"]),
+        "max_marginal_deviation": max(s["sampled"]["max_abs_marginal_deviation"] for s in corr["scenarios"]),
+        "ae_slope": ae["fitted_slope_log_rmse_vs_log_cost"],
+        "ae_direct_slope": ae["fitted_slope_direct_sampling_measured"],
+        "ae_points": ae["slope_fit_points"],
+        "ae_cost": best["applications_of_A"], "ae_rmse": best["rmse"],
+        "ae_direct": best["direct_sampling_rmse_measured"],
+        "ae_ratio": best["error_ratio_direct_over_amplitude_estimation"],
+        "ae_direct_shots": best["shots_direct_sampling_needs_for_this_rmse"],
+        "ae_saving": best["shots_direct_sampling_needs_for_this_rmse"] / best["applications_of_A"],
+        "ae_largest_power": best["largest_power"],
+        "ae_repeats": best["repeats"], "ae_shots_per_power": best["shots_per_power"],
+        "ae_identity": ae["identity_max_abs_difference"],
+        "ae_noisy_rmse": best["noisy_rmse"], "ae_noisy_bias": best["noisy_bias"],
+        "ae_noisy_direct": best["noisy_direct_sampling_rmse_measured"],
+        "ae_noisy_rmse_min": min(s["noisy_rmse"] for s in ae["schedules"]),
+        "ae_noisy_rmse_max": max(s["noisy_rmse"] for s in ae["schedules"]),
+        "ae_one_step_gates": one_step["two_qubit_gates_transpiled"],
+        "ae_one_step_ideal": one_step["good_probability_ideal"], "ae_one_step_noisy": one_step["good_probability_noisy"],
+        "ae_deep_power": deep["power"], "ae_deep_noisy": deep["good_probability_noisy"],
+        "ae_uniform_bits_readout": ae["uniform_bits_good_probability_after_readout"],
+        "ae_deep_low": min(e["good_probability_noisy"] for e in ae["noisy"] if e["power"] >= 4),
+        "ae_deep_high": max(e["good_probability_noisy"] for e in ae["noisy"] if e["power"] >= 4),
+        "torino": torino, "brisbane": brisbane,
+        "t3": t3, "b3": b3, "m3": m3,
+        "ideal_p3": t3["p_optimal_ideal"],
+        "random_bitstring": reference["p_optimal_random_bitstring"],
+        "random_valid": reference["p_optimal_random_valid_selection"],
+        "ideal_over_valid": t3["p_optimal_ideal"] / reference["p_optimal_random_valid_selection"],
+        "random_right_size": reference["right_size_fraction_random_bitstring"],
+        "valid_selections": reference["valid_selections"],
+        "torino_over_stated": t3["p_optimal"] / m3["p_optimal"],
+        "stated_minus_brisbane_z": (m3["p_optimal"] - b3["p_optimal"])
+        / np.sqrt(m3["p_optimal_standard_error"] ** 2 + b3["p_optimal_standard_error"] ** 2),
+        "error_ratio_devices": torino["median_two_qubit_error"] / brisbane["median_two_qubit_error"],
+        "right_size_low": min(e["right_size_fraction"] for rows in (torino["stage2"], brisbane["stage2"], ibm["stated_noise_model"]["stage2"]) for e in rows),
+        "right_size_high": max(e["right_size_fraction"] for rows in (torino["stage2"], brisbane["stage2"], ibm["stated_noise_model"]["stage2"]) for e in rows),
+        "ibm_shots": torino["stage3"]["shots"],
+        "ibm_qaoa_shots": t3["shots"],
+        "runtime_version": ibm["qiskit_ibm_runtime"],
+    }
+
+
 def render(root: Path = ROOT) -> str:
     r = load(root)
-    keys = ("s2", "s3", "sel", "kernel", "stress", "prop", "seeds", "env")
-    return TEMPLATE.read_text().format(t=tables(r), d=derived(r), **{k: r[k] for k in keys})
+    keys = ("s2", "s3", "sel", "kernel", "stress", "prop", "seeds", "env", "corr", "ae", "ibm")
+    return TEMPLATE.read_text().format(
+        t={**tables(r), **extension_tables(r)}, d=derived(r), x=extension_values(r), **{k: r[k] for k in keys}
+    )
 
 
 if __name__ == "__main__":

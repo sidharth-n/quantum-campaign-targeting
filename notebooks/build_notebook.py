@@ -117,6 +117,54 @@ for name in names:
     print(f"{name:28s} identical to the committed file: {same}")
     assert same
 shutil.rmtree(out)"""),
+    ("md", """## Beyond the brief
+
+Three studies built on the committed stage files (README section 11). They read the six selected customers and their Stage 1 probabilities and never write to the stage files. The run goes to a scratch folder and is compared with the committed extension files."""),
+    ("code", """import run_extensions
+from campaign import correlated, amplitude
+
+ext_out = Path("notebook_run_extensions")
+ext = run_extensions.main(ROOT, ext_out, make_figures=True)
+display(Image(filename=str(ext_out / "results" / "figures" / "beyond_the_brief.png")))"""),
+    ("md", """### Correlated customers
+
+The entangled circuit: a three-qubit market factor in superposition controls one rotation per customer. Every customer keeps their Stage 1 probability; only the dependence changes."""),
+    ("code", """given = run_extensions.inputs(ROOT)
+print(correlated.correlated_circuit(given["probabilities"], 0.3, config.FACTOR_QUBITS).draw(fold=120))
+rows = [{"rho": s["rho"], "P(at least 3) exact": s["exact"], "circuit, state vector": s["statevector"],
+         "circuit, sampled": s["sampled"]["estimate"], "P(none or one)": s["probability_none_or_one"],
+         "P(loss)": s["revenue"]["probability_of_loss"], "expected net value": s["revenue"]["expected_net_value"],
+         "sd of net value": s["revenue"]["standard_deviation"]} for s in ext["correlated"]["scenarios"]]
+display(pd.DataFrame(rows).round(4))"""),
+    ("md", """### Amplitude estimation
+
+After k Grover steps the probability of a good outcome is sin^2((2k + 1) phi). The cell checks that on the state vector, then shows the error against the number of state preparations on the ideal simulator and on the noise model, where the amplified signal is lost."""),
+    ("code", """p6, exact6 = given["probabilities"], ext["amplitude"]["exact"]
+for k in (0, 1, 2, 4, 8):
+    print(k, round(amplitude.good_probability_statevector(p6, 3, k), 10), round(amplitude.good_probability_theory(exact6, k), 10))
+display(pd.DataFrame(ext["amplitude"]["schedules"])[["grover_powers", "applications_of_A", "rmse", "direct_sampling_rmse_measured",
+        "error_ratio_direct_over_amplitude_estimation", "noisy_rmse", "noisy_direct_sampling_rmse_measured"]].round(5))
+print("fitted slope, ideal simulator:", round(ext["amplitude"]["fitted_slope_log_rmse_vs_log_cost"], 3),
+      "| direct sampling:", round(ext["amplitude"]["fitted_slope_direct_sampling_measured"], 3))
+display(pd.DataFrame(ext["amplitude"]["noisy"])[["power", "two_qubit_gates_transpiled", "good_probability_ideal", "good_probability_noisy"]].round(4))"""),
+    ("md", """### IBM device snapshots
+
+The Stage 3 circuit and the trained QAOA circuits on the calibration data of two real IBM processors (simulated, no account needed)."""),
+    ("code", """for backend in ext["ibm"]["backends"]:
+    s = backend["stage3"]
+    print(backend["snapshot"], "| stage 3 unmitigated", round(s["unmitigated"]["estimate"], 5), "| mitigated", round(s["mitigated"]["estimate"], 5),
+          "+-", round(s["mitigated"]["standard_error"], 5), "| exact", round(s["exact"], 5))
+    display(pd.DataFrame(backend["stage2"])[["layers", "physical_qubits_used", "depth_transpiled", "two_qubit_gates_transpiled", "swap_count",
+            "p_optimal_ideal", "p_optimal", "p_optimal_standard_error", "right_size_fraction", "p_optimal_given_right_size"]].round(5))
+print("stated noise model, same shots:")
+display(pd.DataFrame(ext["ibm"]["stated_noise_model"]["stage2"])[["layers", "depth_transpiled", "two_qubit_gates_transpiled",
+        "p_optimal_ideal", "p_optimal", "p_optimal_standard_error", "right_size_fraction", "p_optimal_given_right_size"]].round(5))
+print("references:", ext["ibm"]["uniform_reference"])
+for name in ["correlated_customers.json", "amplitude_estimation.json", "ibm_snapshots.json"]:
+    same = (ext_out / "results" / "extensions" / name).read_bytes() == (ROOT / "results" / "extensions" / name).read_bytes()
+    print(f"{name:28s} identical to the committed file: {same}")
+    assert same
+shutil.rmtree(ext_out)"""),
 ]
 
 

@@ -183,3 +183,74 @@ def propagation(prop, path):
     ax.set_title("P(at least 3 of the six subscribe)")
     fig.suptitle(f"Error propagation: {prop['rounds']} bootstrap refits of the stage 1 model", fontsize=11)
     _save(fig, path)
+
+
+def extensions(corr, ae, ibm, path):
+    """Beyond the brief: correlated customers, amplitude estimation, IBM device snapshots."""
+    fig, axes = plt.subplots(2, 2, figsize=(12.5, 8.2))
+    scenarios = corr["scenarios"]
+    rho = [s["rho"] for s in scenarios]
+
+    ax = axes[0, 0]
+    ax.plot(rho, [s["exact"] for s in scenarios], color=EXACT, marker="o", markersize=4,
+            label=f"P(at least {corr['threshold']} subscribe), exact")
+    ax.errorbar(rho, [s["sampled"]["estimate"] for s in scenarios], yerr=[s["sampled"]["standard_error"] for s in scenarios],
+                color=QUANTUM, linestyle="none", marker="s", markersize=5, capsize=3, label="entangled circuit, sampled")
+    ax.plot(rho, [s["probability_none_or_one"] for s in scenarios], color=CLASSICAL, marker="o", markersize=4,
+            label="P(none or one subscribes)")
+    ax.plot(rho, [s["revenue"]["probability_of_loss"] for s in scenarios], color=NOISY, marker="o", markersize=4,
+            label="P(campaign loses money), model")
+    ax.set_xlabel("factor parameter rho (strength of the common factor)")
+    ax.set_ylabel("probability")
+    ax.set_ylim(0, None)
+    ax.set_title("Correlated customers: the tails move, the headline barely")
+    ax.legend(fontsize=8)
+
+    ax = axes[0, 1]
+    k = np.arange(len(scenarios[0]["pmf"]))
+    width = 0.38
+    ax.bar(k - width / 2, scenarios[0]["pmf"], width, color=EXACT, label="independent (the brief)")
+    ax.bar(k + width / 2, scenarios[-1]["pmf"], width, color=QUANTUM, label=f"correlated, rho = {scenarios[-1]['rho']:.1f}")
+    ax.axvline(corr["threshold"] - 0.5, color=EXACT, linestyle=":", linewidth=1)
+    ax.set_xlabel("number of the six customers who subscribe")
+    ax.set_ylabel("probability")
+    ax.set_title("Same six customers, same marginals, wider outcome")
+    ax.legend(fontsize=8)
+    ax.grid(axis="x", visible=False)
+
+    ax = axes[1, 0]
+    cost = np.array([s["applications_of_A"] for s in ae["schedules"]], dtype=float)
+    ax.loglog(cost, [s["rmse"] for s in ae["schedules"]], color=QUANTUM, marker="o", markersize=5,
+              label=f"amplitude estimation, ideal (slope {ae['fitted_slope_log_rmse_vs_log_cost']:.2f})")
+    ax.loglog(cost, [s["direct_sampling_rmse_measured"] for s in ae["schedules"]], color=CLASSICAL, marker="o",
+              markersize=4, label=f"direct sampling, ideal (slope {ae['fitted_slope_direct_sampling_measured']:.2f})")
+    ax.loglog(cost, [s["noisy_rmse"] for s in ae["schedules"]], color=NOISY, marker="s", markersize=5,
+              label="amplitude estimation, noise model")
+    ax.loglog(cost, [s["noisy_direct_sampling_rmse_measured"] for s in ae["schedules"]], color=NOISY, marker="o",
+              markersize=4, linestyle=":", label="direct sampling, noise model")
+    ax.set_xlabel("applications of the stage 3 state preparation")
+    ax.set_ylabel("root mean square error of P(at least 3)")
+    ax.set_title("Amplitude estimation: a gain when ideal, lost to noise")
+    ax.legend(fontsize=8)
+
+    ax = axes[1, 1]
+    stated = ibm["stated_noise_model"]["stage2"]
+    depths = [e["layers"] for e in stated]
+    ax.semilogy(depths, [e["p_optimal_ideal"] for e in stated], color=EXACT, marker="o", markersize=4, label="ideal")
+    for backend, colour in zip(ibm["backends"], (QUANTUM, "#91a7ff")):
+        ax.errorbar(depths, [e["p_optimal"] for e in backend["stage2"]], yerr=[e["p_optimal_standard_error"] for e in backend["stage2"]],
+                    color=colour, marker="s", markersize=5, capsize=3, label=f"{backend['snapshot']} ({backend['two_qubit_gate'].upper()})")
+    ax.errorbar(depths, [e["p_optimal"] for e in stated], yerr=[e["p_optimal_standard_error"] for e in stated],
+                color=NOISY, marker="s", markersize=5, capsize=3, label="stated noise model")
+    ax.axhline(ibm["uniform_reference"]["p_optimal_random_valid_selection"], color=CLASSICAL, linestyle="--", linewidth=1.2,
+               label="random valid selection")
+    ax.axhline(ibm["uniform_reference"]["p_optimal_random_bitstring"], color=CLASSICAL, linestyle=":", linewidth=1.2,
+               label="random bitstring")
+    ax.set_yscale("log")
+    ax.set_xticks(depths)
+    ax.set_xlabel("QAOA depth p")
+    ax.set_ylabel("P(optimal selection) per shot")
+    ax.set_title("QAOA on IBM device snapshots")
+    ax.legend(fontsize=8)
+    fig.suptitle("Beyond the brief", fontsize=12)
+    _save(fig, path)

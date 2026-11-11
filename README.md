@@ -13,11 +13,19 @@ My entry for The Atomiq Hackathon (Qiskit Fall Fest 2026 at IEM). A bank wants t
 
 Everything is rebuilt by one command, `python run_pipeline.py`, in two to four minutes on a laptop. Two runs give byte-identical result files, and a test checks that.
 
+**Beyond the brief.** The brief asks for one circuit and one number. I also asked three questions it does not ask and checked each answer against exact maths (section 11). None of them changes the submitted answer above.
+
+| Question | What I found |
+|---|---|
+| What if the six customers are not independent? | I load a one-factor correlation model on an entangled 9-qubit circuit that keeps every customer's Stage 1 probability. At factor parameter rho = 0.5 (mean correlation between two customers' outcomes 0.27) the chance of at least three subscriptions barely moves (0.338 to 0.374), while the model's chance that the campaign loses money goes from 15% to 31% (taking each customer's expected deposit value as the payoff when they subscribe). The expected net value that Stage 2 optimises does not move at all. |
+| Can the probability be read with fewer circuit runs? | On an ideal simulator, yes. With amplitude estimation the error falls with slope -1.05 against the number of state preparations (direct sampling, measured the same way: -0.50), and at 8,512 preparations it is 6.5 times smaller. On my noise model the same estimator fails (error 0.16 against 0.006 for direct sampling), so the submitted number uses direct sampling. |
+| What happens on the calibration of real IBM machines? | On snapshots of IBM's Torino and Brisbane processors the Stage 3 estimate is within its standard error of the exact value after readout mitigation. QAOA at p = 3 returns the optimal selection in 0.67% of shots on Torino and 0.36% on Brisbane. The ideal circuit gives 2.43%, a random bitstring 0.10% and a random valid selection 0.48%. |
+
 Four things I found that I think matter more than the headline numbers:
 
 1. **The budget and capacity limits never bind for my ten candidates.** The most expensive possible group of six costs 20 (limit 25) and the most capacity-hungry needs 17 (limit 22), so all 210 groups of six are feasible. I still built and verified the full constraint handling, and I added a stress test with tightened limits to show it works when the limits do bind.
-2. **QAOA finds the optimum, but so would random guessing at this size.** With 8192 shots, uniformly random bitstrings contain the optimum with probability 99.97%. What QAOA adds is measured per shot: it raises the chance of the optimal bitstring from 0.0010 to 0.0243 (25 times). I make no claim of quantum advantage anywhere in this project.
-3. **On the device noise model I assume, the QAOA signal is almost gone.** The p = 3 circuit needs 479 two-qubit gates on heavy-hex hardware, and its output is close to uniform noise (optimum probability 0.0033, against 0.0010 for random bitstrings).
+2. **QAOA finds the optimum, but so would random guessing at this size.** With 8192 shots, uniformly random bitstrings contain the optimum with probability 99.97%. What QAOA adds is measured per shot: it raises the chance of the optimal bitstring from 0.0010 for a random bitstring to 0.0243 (25 times). Against the fairer reference, a random valid selection of six (0.0048), that is 5.1 times. I make no claim of quantum advantage anywhere in this project.
+3. **On the device noise model I assume, the QAOA signal is almost gone.** The p = 3 circuit needs 479 two-qubit gates on heavy-hex hardware, and its output is close to uniform noise (optimum probability 0.0033, against 0.0010 for random bitstrings). On the calibration snapshot of IBM's Torino processor the same circuit does better (0.0067, section 11.3).
 4. **Stage 1 uncertainty dominates everything else.** The shot noise of the Stage 3 estimate is about 0.0005. The spread caused by refitting the Stage 1 model on resampled training data is about 0.09, roughly 191 times larger. The same six customers get a lower probability in 98% of those refits, so the submitted number is very sensitive to the training sample.
 
 ## Contents
@@ -32,8 +40,9 @@ Four things I found that I think matter more than the headline numbers:
 8. [Error and noise analysis](#8-error-and-noise-analysis)
 9. [Setup and execution](#9-setup-and-execution)
 10. [Business impact](#10-business-impact)
-11. [Limitations](#11-limitations)
-12. [References](#12-references)
+11. [Beyond the brief](#11-beyond-the-brief)
+12. [Limitations](#12-limitations)
+13. [References](#13-references)
 
 ## 1. Pipeline architecture
 
@@ -81,6 +90,7 @@ Repository layout:
 
 ```
 run_pipeline.py            one command that rebuilds every result
+run_extensions.py          the studies of section 11 (reads the stage files, never writes them)
 build_report.py            fills this README from the result files
 src/campaign/
   config.py                every seed, grid, shot count and noise number
@@ -93,7 +103,12 @@ src/campaign/
   stage3.py                Stage 3 circuits, exact values, readout mitigation
   hardware.py              heavy-hex coupling map, noise model, transpilation statistics
   propagation.py           bootstrap error propagation
+  correlated.py            correlated customers: copula model, entangled circuit, money at risk
+  amplitude.py             amplitude estimation of the Stage 3 probability
+  ibm_backends.py          Stage 2 and 3 circuits on IBM device snapshots
+  real_device.py           circuits and post-processing for a real IBM processor
   outputs.py  figures.py   result files and figures
+scripts/run_ibm_hardware.py   optional run on a real IBM processor (needs an API key)
 tests/                     pytest suite
 notebooks/walkthrough.ipynb   executed notebook that walks through the three stages
 stage1_predictions.csv  stage2_selection.csv/.json  stage3_simulation.csv/.json   required result files
@@ -326,7 +341,7 @@ The submitted quantum estimate is the noiseless 1,048,576-shot run: **0.338246**
 
 The exact value is the Poisson-binomial tail computed by dynamic programming over the six customers, and it is cross-checked by summing all 64 outcomes. Distribution of the number of subscribers (0 to 6): 0.0616, 0.2436, 0.3563, 0.2423, 0.0820, 0.0134, 0.0008. Expected number of subscribers: 2.08.
 
-**Counter circuit.** The six-RY circuit does the counting classically, after measurement. As a second design I built a circuit that counts coherently: an adder (`WeightedAdder`) writes the number of ones into a 3-qubit register, a comparator (`IntegerComparator`) sets one flag qubit when the sum is at least 3, and only the flag is measured. P(flag = 1) is the answer; its state-vector value agrees with the exact one to 9e-15. This is the form of circuit that amplitude estimation would start from. In theory amplitude estimation needs quadratically fewer circuit runs than sampling; that is a known result about the algorithm, not something this project demonstrates. It uses 13 qubits and 637 two-qubit gates after transpilation, and on the noise model it returns 0.667, which is useless. I did not run amplitude estimation; with noise this strong it would only make the circuit deeper.
+**Counter circuit.** The six-RY circuit does the counting classically, after measurement. As a second design I built a circuit that counts coherently: an adder (`WeightedAdder`) writes the number of ones into a 3-qubit register, a comparator (`IntegerComparator`) sets one flag qubit when the sum is at least 3, and only the flag is measured. P(flag = 1) is the answer; its state-vector value agrees with the exact one to 9e-15. This is the form of circuit that amplitude estimation would start from at scale. In theory amplitude estimation needs quadratically fewer state preparations than sampling. Section 11.2 measures that for these six customers, with a simpler oracle written from the truth table. It uses 13 qubits and 637 two-qubit gates after transpilation, and on the noise model it returns 0.667, which is useless. Amplitude estimation would only make this circuit deeper. Section 11.2 runs it on the lighter six-qubit oracle and finds that it fails on the same noise model.
 
 ![Stage 3](results/figures/stage3_simulation.png)
 
@@ -482,15 +497,16 @@ python3.12 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
 python run_pipeline.py           # rebuilds every result file and figure
+python run_extensions.py         # rebuilds the studies of section 11 (one to two minutes)
 python -m pytest                 # all tests, including one full rerun of the pipeline
 python -m pytest -m "not slow"   # the same without the full rerun
 ```
 
-Timings on my laptop (Apple silicon, 10 cores): the pipeline takes two to four minutes, the full test suite about three to five, the fast tests under a minute. The code needs no account, token or network access after the install and uses nothing specific to my machine, so the same three commands should work in a cloud environment such as Google Colab or a GitHub Codespace; I have not run it there.
+Timings on my laptop (Apple silicon, 10 cores): the pipeline takes two to four minutes, the extension studies one to two minutes, the full test suite four to six minutes, the fast tests under a minute. The code needs no account, token or network access after the install and uses nothing specific to my machine, so the same three commands should work in a cloud environment such as Google Colab or a GitHub Codespace; I have not run it there.
 
 `run_pipeline.py` writes the five required files to the repository root and the detail files to `results/`, reads the three stage files back and stops if an id or probability differs between them (`results/traceability.csv`), and then refreshes this README from the result files (`build_report.py`). `python run_pipeline.py --out some/dir` writes everything to another folder and leaves the repository untouched. The notebook `notebooks/walkthrough.ipynb` is committed with its outputs and can be rerun with Jupyter.
 
-**Versions.** Python 3.12.13, qiskit 2.6.2, qiskit-aer 0.18.2, scikit-learn 1.9.1, numpy 2.5.4, scipy 1.18.1, pandas 3.1.1. Pinned in `requirements.txt`, recorded in `results/environment.json`.
+**Versions.** Python 3.12.13, qiskit 2.6.2, qiskit-aer 0.18.2, scikit-learn 1.9.1, numpy 2.5.4, scipy 1.18.1, pandas 3.1.1. Pinned in `requirements.txt`, recorded in `results/environment.json`. The IBM device snapshots of section 11.3 come from qiskit-ibm-runtime 0.52.0, also pinned; it is used offline, with no account.
 
 **Seeds.** All in `src/campaign/config.py`, recorded in `results/seeds.json`.
 
@@ -511,9 +527,9 @@ Timings on my laptop (Apple silicon, 10 cores): the pipeline takes two to four m
 
 **Shots.** Stage 2: 8192 per circuit. Stage 3: 1,048,576 for the submitted estimate, 32,768 for the noiseless, noisy and calibration runs, 1,024 for the noisy counter circuit. Kernel check: 8192 per pair. Monte Carlo: 1,000,000 draws. Bootstrap: 200 refits.
 
-**Reproducibility.** `tests/test_reproducibility.py` runs the whole pipeline into a temporary folder and compares every result file with the committed one, byte for byte (only `results/environment.json` is excluded, since it records the machine). I ran it on one machine, both in my working copy and from a fresh clone of this repository with a new virtual environment built from `requirements.txt` alone. Across platforms the last digits of floating-point results can differ, which is why the Stage 1 probabilities are rounded once to 12 decimals before anything else uses them.
+**Reproducibility.** `tests/test_reproducibility.py` runs the whole pipeline into a temporary folder and compares every result file with the committed one, byte for byte (only `results/environment.json` is excluded, since it records the machine). `tests/test_extensions.py` does the same for `run_extensions.py` and also checks that the five stage files are not modified by it. I ran it on one machine, both in my working copy and from a fresh clone of this repository with a new virtual environment built from `requirements.txt` alone. Across platforms the last digits of floating-point results can differ, which is why the Stage 1 probabilities are rounded once to 12 decimals before anything else uses them.
 
-**What the tests cover.** No test-set leakage (scaler statistics, one-hot levels, predictions independent of the other test rows, cross-validation splits, calibration scores that never see their own row or label); the tie-break rule; the schema of the three result files; ids and probabilities identical across the files; Stage 2 validity and the objective recomputed from scratch; brute force against an independent enumeration; both QUBO encodings against brute force on the organisers' instance, the stress instance and random instances; the stress rule keeping its two properties; Ising energies against QUBO energies on all states; emulators against Qiskit state vectors; Dicke state; Qiskit bit order; Stage 3 exact value three ways; qubit-to-customer order; readout mitigation on a known case; the counter circuit; the traceability check refusing corrupted files; this README matching the result files; byte-identical reruns.
+**What the tests cover.** No test-set leakage (scaler statistics, one-hot levels, predictions independent of the other test rows, cross-validation splits, calibration scores that never see their own row or label); the tie-break rule; the schema of the three result files; ids and probabilities identical across the files; Stage 2 validity and the objective recomputed from scratch; brute force against an independent enumeration; both QUBO encodings against brute force on the organisers' instance, the stress instance and random instances; the stress rule keeping its two properties; Ising energies against QUBO energies on all states; emulators against Qiskit state vectors; Dicke state; Qiskit bit order; Stage 3 exact value three ways; qubit-to-customer order; readout mitigation on a known case; the counter circuit; the traceability check refusing corrupted files; this README matching the result files; byte-identical reruns. For section 11: the correlated circuit against the exact mixture on every outcome, its marginals, its control-qubit order and the money statistics on a hand-computed case; the Grover identity for every power, the likelihood estimator and the cost count; the rebuilt QAOA circuits against the Stage 2 values; calibration circuits on the same physical qubits; the hardware post-processing on simulated counts; the extension files rerun byte for byte with the stage files untouched.
 
 ## 10. Business impact
 
@@ -530,20 +546,135 @@ Timings on my laptop (Apple silicon, 10 cores): the pipeline takes two to four m
 
 **Where quantum stands for this use case.** At 10 candidates a laptop solves the selection exactly in milliseconds, and the quantum optimiser is slower and, on today's noise levels, close to random. What the project does establish is a verified formulation at small size. The QUBO, the Ising map and the decoding extend to larger candidate pools as they are; the exhaustive checks I relied on here (brute force, enumeration of every bitstring, exact emulation of the circuit) do not, so a larger instance would need other evidence that the encoding and the optimiser are right. Whether QAOA is competitive there is an open research question, and this project is not evidence either way.
 
-## 11. Limitations
+## 11. Beyond the brief
+
+The brief fixes one circuit and one number. This section asks three questions it does not ask. None of them touches the submitted answer: `run_extensions.py` reads the committed stage files and writes its results to `results/extensions/`, one figure to `results/figures/`, and refreshes this README. A test checks that the five stage files are unchanged by a run and that a rerun reproduces the extension files byte for byte.
+
+![Beyond the brief](results/figures/beyond_the_brief.png)
+
+### 11.1 What if the six customers are not independent?
+
+Stage 3 assumes that customers respond independently. That is why its circuit has no entangling gate, and why a laptop can write the answer down. Real campaigns are not like that: the month, interest rates or a competing offer move everyone at once. Banks handle the same problem in credit portfolios with a one-factor Gaussian copula, and Woerner and Egger (2019) showed how to load that model on qubits. I did this for the six selected customers.
+
+- **Model.** A market factor Z takes 8 equally likely values z_k = Phi^-1((k + 1/2) / 8). Given z_k, customer i subscribes with probability p_i(z_k) = Phi((c_i + sqrt(rho) z_k) / sqrt(1 - rho)), and customers are independent given the factor. I solve c_i so that the average of p_i(z_k) over the scenarios is exactly the Stage 1 probability p_i. Every customer keeps their Stage 1 probability. Only the dependence between customers changes, and rho = 0 gives back the Stage 3 distribution exactly.
+- **Circuit.** 3 factor qubits in a uniform superposition (Hadamard gates), then one uniformly controlled RY per customer, controlled by the factor register, with angle 2 asin sqrt(p_i(z_k)) when the register holds k. That is 9 qubits. The factor register is entangled with every customer qubit, and that is what correlates the customers. Only the customer qubits are measured, so the decoding is the same as in Stage 3. On the heavy-hex device model the circuit has depth 248 and 109 ECR gates.
+- **Checks.** The state vector of the circuit equals the exact model, a mixture of product distributions, on all 64 outcomes (largest difference 3e-16). At rho = 0 the exact value equals the Stage 3 value. The subscriber count is then a mixture of Poisson-binomial distributions. The sampled marginals stay on the Stage 1 probabilities at every rho (largest deviation 0.0052). A test on the joint distribution of both registers pins the order of the control qubits.
+
+Net value of an outcome is the expected deposit value of the customers who subscribe minus the contact cost of all six, the same money terms Stage 2 uses. The workbook gives one expected deposit value per customer and no distribution of payoffs, so I take that value as the amount received when the customer subscribes. Every money figure below is a result of the model under that assumption, not an observed business probability. It is computed from the same measured bitstrings. "Loses money" means the net value is below zero.
+
+| Correlation rho | Mean pairwise correlation of outcomes | P(at least 3), exact | Entangled circuit, state vector | Entangled circuit, 32,768 shots | P(none or one subscribes) | P(campaign loses money) | Standard deviation of net value | Mean net value in the worst 25% |
+|---|---|---|---|---|---|---|---|---|
+| 0.0 | 0.000 | 0.3385 | 0.3385 | 0.3371 ± 0.0026 | 0.305 | 0.148 | 21.5 | -2.1 |
+| 0.1 | 0.048 | 0.3509 | 0.3509 | 0.3501 ± 0.0026 | 0.336 | 0.179 | 23.9 | -4.7 |
+| 0.2 | 0.100 | 0.3605 | 0.3605 | 0.3671 ± 0.0027 | 0.363 | 0.210 | 26.1 | -7.2 |
+| 0.3 | 0.154 | 0.3674 | 0.3674 | 0.3686 ± 0.0027 | 0.388 | 0.242 | 28.4 | -9.5 |
+| 0.5 | 0.274 | 0.3735 | 0.3735 | 0.3762 ± 0.0027 | 0.431 | 0.307 | 32.7 | -13.0 |
+
+What this says:
+
+- **The headline number is the least sensitive to the assumption.** P(at least 3) moves from 0.338 to 0.374 across the whole range. It goes up, which looks like good news and is not. The expected number of subscribers stays at 2.08, below three. Correlation only pushes probability to both ends of the count.
+- **The downside is the most sensitive.** The chance that none or only one of the six subscribes goes from 31% to 43%, and the model's chance that the campaign loses money goes from 15% to 31%, 2.1 times as likely. In the worst quarter of outcomes the mean net value falls from -2.1 to -13.0.
+- **Stage 2 cannot see any of this.** The expected net value is 24.53 at every rho, because an expectation does not depend on correlation. The selection objective and the submitted probability would both report "no change" while the risk doubles.
+- **Rho is the factor parameter, not the correlation you would observe.** The second column gives the correlation between two customers' outcomes, which is about half of rho here.
+- **I do not know rho.** The workbook holds one snapshot and no repeated campaigns, so the correlation cannot be estimated from it. The table is a range of what-ifs. The practical reading is that a bank that believes its customers move together should judge this campaign by the loss probability, not by the chance of three subscriptions.
+
+### 11.2 Can the probability be read with fewer circuit runs?
+
+Sampling the Stage 3 circuit N times gives an error that falls like 1 / sqrt(N). Amplitude estimation reaches an error close to 1 / N in the number of times the state is prepared. I built it for the six customers and measured the scaling, first on an ideal simulator and then on the noise model.
+
+- **Circuit.** A is the Stage 3 state preparation. S_chi flips the sign of every outcome with at least 3 ones, S_0 flips the sign of the all-zero state, and Q = A S_0 A^-1 S_chi is the Grover operator. After k applications of Q the probability of a "good" outcome is sin^2((2k + 1) phi), where sin^2(phi) is the probability I want. The state vector confirms this for every power used (largest difference 1e-13).
+- **Estimator.** Maximum-likelihood amplitude estimation (Suzuki et al. 2020): sample Q^k A for k = 0, 1, 2, 4, ... and take the phi that maximises the joint likelihood. It needs no phase estimation register and no controlled Q, only the 6 customer qubits.
+- **Measurement.** 64 shots per circuit, each schedule repeated 300 times, root mean square error against the exact value. Direct sampling is measured the same way, with the same number of repetitions.
+- **What is counted.** Cost is the number of applications of A or its inverse: one shot of Q^k A uses 2k + 1. This is the query count in which the quadratic speed-up is stated. It leaves out the two reflections inside Q, which hold almost all of the physical gates, so it is not a run-time comparison.
+
+| Grover powers used | Applications of A | Amplitude estimation, ideal | Direct sampling, ideal (formula) | Direct / amplitude estimation | Amplitude estimation, noise model | Direct sampling, noise model |
+|---|---|---|---|---|---|---|
+| 0, 1 | 256 | 0.04008 | 0.02849 (0.02957) | 0.7 | 0.1256 | 0.0313 |
+| 0, 1, 2 | 576 | 0.01074 | 0.01932 (0.01972) | 1.8 | 0.1603 | 0.0200 |
+| 0, 1, 2, 4 | 1,152 | 0.00556 | 0.01376 (0.01394) | 2.5 | 0.1713 | 0.0146 |
+| 0, 1, 2, 4, 8 | 2,240 | 0.00294 | 0.01037 (0.01000) | 3.5 | 0.1703 | 0.0109 |
+| 0, 1, 2, 4, 8, 16 | 4,352 | 0.00198 | 0.00668 (0.00717) | 3.4 | 0.1671 | 0.0085 |
+| 0, 1, 2, 4, 8, 16, 32 | 8,512 | 0.00078 | 0.00513 (0.00513) | 6.5 | 0.1646 | 0.0064 |
+
+Columns three to five are the ideal simulator. For this instance a straight-line fit through the 6 points on a log-log plot gives slope -1.05 for amplitude estimation and -0.50 for direct sampling (theory: -0.50). With 8,512 applications the error is 0.00078, 6.5 times smaller than direct sampling on the same budget, which would need about 363,519 shots to match it. At the smallest budget amplitude estimation is the worse of the two.
+
+The last two columns repeat the whole study on the stated noise model, with the same schedules and the same estimator. There amplitude estimation fails: its error is between 0.13 and 0.17 at every budget, almost all of it bias (+0.16 at the largest), while direct sampling under the same noise reaches 0.0064. The reason is in the Grover circuits themselves:
+
+| Grover power | Two-qubit gates (heavy-hex) | Depth | P(good), ideal | P(good), stated noise model |
+|---|---|---|---|---|
+| 0 | 0 | 5 | 0.3385 | 0.3329 |
+| 1 | 214 | 659 | 0.9171 | 0.6105 |
+| 2 | 486 | 1,336 | 0.0014 | 0.5826 |
+| 4 | 1,149 | 2,472 | 0.4098 | 0.6361 |
+| 8 | 2,364 | 4,899 | 0.8189 | 0.6388 |
+| 16 | 4,787 | 9,801 | 0.9950 | 0.6441 |
+| 32 | 9,706 | 19,528 | 0.2127 | 0.6404 |
+
+One Grover step needs 214 two-qubit gates on heavy-hex, and the amplified probability reads 0.610 where it should read 0.917. For powers 4 to 32 the measured probability stays between 0.636 and 0.644 whatever the ideal value is, close to the 0.642 that uniformly random bits give after the stated readout error. For this circuit the estimator is fitting a sine curve to numbers that carry almost no signal. So on this noise model direct sampling is the right choice, and the submitted estimate uses it. I did not test other noise models or error mitigation for these circuits.
+
+Two more limits. S_chi is written from the truth table of 64 outcomes; the scalable form is the adder and comparator of the counter circuit in section 5. And at six qubits the exact answer is one line of classical code, so this measures how the algorithm scales on this instance. It is not a quantum advantage.
+
+### 11.3 What happens on the calibration of real IBM machines?
+
+The noise model in section 8 has four stated numbers. Here the same circuits run on the calibration snapshots of two real IBM processors that ship with qiskit-ibm-runtime 0.52.0: coupling map, native gates, gate and readout errors, T1 and T2 of the device, turned into a noise model with thermal relaxation by `AerSimulator.from_backend`. Every circuit touches at most ten physical qubits, so the simulator evolves the exact density matrix of the noisy circuit and only the shot noise is statistical.
+
+| Snapshot | Qubits | Two-qubit gate | Median two-qubit error | Median readout error |
+|---|---|---|---|---|
+| FakeTorino | 133 | CZ | 0.0042 | 0.0229 |
+| FakeBrisbane | 127 | ECR | 0.0077 | 0.0200 |
+
+Stage 3 circuit, 32,768 shots, with the two calibration circuits placed on the same physical qubits:
+
+| Snapshot | Physical qubits (customer 0 to 5) | Unmitigated | Error | Readout mitigated | Error | Standard error |
+|---|---|---|---|---|---|---|
+| FakeTorino | 5, 87, 60, 51, 66, 81 | 0.342438 | +0.003943 | 0.339104 | +0.000609 | 0.002671 |
+| FakeBrisbane | 79, 9, 15, 124, 103, 112 | 0.342926 | +0.004431 | 0.338964 | +0.000469 | 0.002719 |
+
+Readout error pushes the raw estimate up by about 0.004 on both devices. The tensored readout mitigation brings both back to within their standard error of the exact value.
+
+Stage 2, the trained QAOA circuits, 131,072 shots each. The stated noise model of the main pipeline is rerun with the same shot count, so the three noise sources are compared like for like (section 4 reports its 8192-shot run). There are two references. A random bitstring is the optimum with probability 0.0010. A random valid selection, six of the ten at random, is the optimum with probability 0.0048, because all 210 such selections are feasible here. The second one is the reference a sensible classical sampler would set. The ± values are one standard error.
+
+| Noise source | p | Depth | Two-qubit gates | SWAPs (routing diagnostic) | P(optimum), ideal | P(optimum) | P(six selected) | P(optimum given six selected) |
+|---|---|---|---|---|---|---|---|---|
+| Stated noise model | 1 | 296 | 146 ECR | 34 | 0.0033 | 0.0026 ± 0.0001 | 0.384 | 0.0067 ± 0.0004 |
+| Stated noise model | 2 | 490 | 300 ECR | 76 | 0.0094 | 0.0038 ± 0.0002 | 0.305 | 0.0124 ± 0.0006 |
+| Stated noise model | 3 | 721 | 479 ECR | 119 | 0.0243 | 0.0039 ± 0.0002 | 0.319 | 0.0123 ± 0.0005 |
+| FakeTorino | 1 | 262 | 144 CZ | 33 | 0.0033 | 0.0027 ± 0.0001 | 0.401 | 0.0068 ± 0.0004 |
+| FakeTorino | 2 | 384 | 299 CZ | 72 | 0.0094 | 0.0044 ± 0.0002 | 0.309 | 0.0143 ± 0.0006 |
+| FakeTorino | 3 | 554 | 452 CZ | 111 | 0.0243 | 0.0067 ± 0.0002 | 0.369 | 0.0182 ± 0.0006 |
+| FakeBrisbane | 1 | 378 | 144 ECR | 16 | 0.0033 | 0.0025 ± 0.0001 | 0.387 | 0.0064 ± 0.0004 |
+| FakeBrisbane | 2 | 655 | 315 ECR | 58 | 0.0094 | 0.0033 ± 0.0002 | 0.302 | 0.0110 ± 0.0005 |
+| FakeBrisbane | 3 | 933 | 455 ECR | 64 | 0.0243 | 0.0036 ± 0.0002 | 0.325 | 0.0112 ± 0.0005 |
+
+What this says:
+
+- **Torino is clearly the best of the three.** At p = 3 it returns the optimum in 0.67% of shots, 1.7 times the stated noise model (0.39%). Its median two-qubit error is 54% of Brisbane's.
+- **My stated noise model sits next to Brisbane.** At p = 3 they give 0.39% and 0.36%, 1.2 combined standard errors apart. For this circuit at p = 3, the four numbers I assumed behave like the Brisbane snapshot and are pessimistic next to the Torino snapshot. Two snapshots and one circuit do not say more than that about either processor family.
+- **Against a random valid selection, only Torino at p = 3 comes out ahead per shot** (0.0067 against 0.0048). Brisbane and the stated model stay below it at every depth. All are far below the ideal 0.0243.
+- **Most noisy shots are not valid selections.** Only 30% to 40% of them select exactly six customers (the ideal p = 3 circuit: 63%; random bits: 21%). Among the shots that do, every noise source beats the random valid selection at p = 3 (0.0182, 0.0112 and 0.0123 for Torino, Brisbane and the stated model).
+
+The SWAP column is a routing diagnostic: a second compilation from the same starting qubits and the same seed that keeps SWAP as a gate. The circuit that is run has those SWAPs merged into native gates, so the two-qubit gate count is not derived from it. A snapshot is a past calibration, not the device today. The simulation has no crosstalk or drift, and each number is one seeded run.
+
+### 11.4 On a real quantum processor
+
+`scripts/run_ibm_hardware.py` sends the Stage 3 circuit, its two readout-calibration circuits, the correlated-customers circuit and the depth-1 QAOA circuit to a real IBM processor in one job. The returned counts get the same decoding as the simulated runs, and the Stage 3 circuit gets the same readout mitigation (`src/campaign/real_device.py`). It needs an IBM Quantum API key. I did not run it for this submission, so every noisy number in this report is a simulation.
+
+## 12. Limitations
 
 - **Small data.** 300 training rows with 35 subscribers. Model comparisons are within noise. If the test set resembles the training set, it holds roughly a dozen subscribers, so test metrics will be noisy too.
 - **Model selection is optimistic.** Hyperparameters were chosen with the same cross-validation folds that produce the reported scores. The scores are for comparing models, not unbiased estimates of test performance.
 - **The hybrid was a design choice.** On PR-AUC alone, logistic regression is ahead of the hybrid (0.284 against 0.277). The difference is inside the fold-to-fold scatter, but I did not let the score make the choice.
 - **Calibration at the top.** The calibration slope is 0.88, below 1, so the largest probabilities, which are the ones Stages 2 and 3 use, are probably somewhat too high.
-- **Independence.** Stage 3 assumes customers respond independently, as the task states. Common causes (the month, the economy, a competing offer) would add correlation and widen the distribution of the subscriber count.
+- **Independence.** The submitted Stage 3 number assumes customers respond independently, as the task states. Section 11.1 shows what a common cause does to it. The correlation itself cannot be estimated from this workbook.
 - **Penalty weights use the answer.** The unbalanced-penalty weights are validated against brute force. That is honest for a 10-qubit instance and not available at scale.
 - **QAOA is trained on the exact distribution.** A real device would have to estimate the objective from shots, which adds noise to the optimisation itself. I did not study that.
-- **Simulated noise only.** No real hardware. The noise model has depolarising and readout errors with stated values; it has no decoherence during idle time, no crosstalk and no drift.
+- **Simulated noise only.** No real hardware. The stated noise model has depolarising and readout errors only; it has no decoherence during idle time, no crosstalk and no drift. The IBM snapshots of section 11.3 add thermal relaxation from real calibration data but are still simulations.
 - **The limits do not bind.** The constraint handling is therefore tested on the stress instance, not on the organisers' instance.
+- **Public source data.** The workbook names its source as `bank.csv`, a public dataset, so the hidden test labels could in principle be looked up. I did not download or use that file. The pipeline reads the organisers' workbook and nothing else, and a judge can check that in `src/campaign/data.py`.
+- **Extensions are what-ifs.** Section 11 uses an assumed range for the correlation, counts state preparations and not gates for amplitude estimation, and uses past calibration snapshots in one seeded simulation each. None of it enters the submitted files.
 - **One machine.** Byte-identical reruns were checked on one machine only (working copy and fresh clone).
 
-## 12. References
+## 13. References
 
 - S. Moro, P. Cortez, P. Rita. A data-driven approach to predict the success of bank telemarketing. Decision Support Systems 62 (2014). The bank marketing dataset.
 - V. Havlicek et al. Supervised learning with quantum-enhanced feature spaces. Nature 567 (2019). Quantum kernels and the ZZ feature map.
@@ -556,6 +687,10 @@ Timings on my laptop (Apple silicon, 10 cores): the pipeline takes two to four m
 - A. Montanez-Barrera et al. Unbalanced penalization: a new approach to encode inequality constraints of combinatorial problems for quantum optimization algorithms. Quantum Science and Technology 9 (2024).
 - S. Hadfield et al. From the quantum approximate optimization algorithm to a quantum alternating operator ansatz. Algorithms 12 (2019).
 - A. Bartschi, S. Eidenbenz. Deterministic preparation of Dicke states. FCT 2019, arXiv:1904.07358.
-- Qiskit and Qiskit Aer documentation, docs.quantum.ibm.com.
+- S. Woerner, D. J. Egger. Quantum risk analysis. npj Quantum Information 5 (2019). Loading a correlated portfolio on qubits.
+- D. J. Egger et al. Credit risk analysis using quantum computers. IEEE Transactions on Computers 70 (2021). The one-factor Gaussian copula circuit.
+- G. Brassard, P. Hoyer, M. Mosca, A. Tapp. Quantum amplitude amplification and estimation. Contemporary Mathematics 305 (2002).
+- Y. Suzuki et al. Amplitude estimation without phase estimation. Quantum Information Processing 19 (2020). The maximum-likelihood estimator.
+- Qiskit, Qiskit Aer and qiskit-ibm-runtime documentation, docs.quantum.ibm.com.
 
 Licence: MIT.

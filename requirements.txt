@@ -1,6 +1,7 @@
 # Python 3.12. Exact versions used to produce the committed results.
 qiskit==2.6.2
 qiskit-aer==0.18.2
+qiskit-ibm-runtime==0.52.0   # device calibration snapshots (used offline) and the optional hardware script
 scikit-learn==1.9.1
 numpy==2.5.4
 scipy==1.18.1
